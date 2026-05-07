@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Notifications</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}.tab{border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;padding-bottom:10px;}.tab.active{color:#111;border-bottom-color:#111;font-weight:600;}.tab:not(.active){color:#6b7280;}</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Notifications</h2><p class="text-sm text-slate-500">Send fee reminders and results alerts to parents via SMS or email</p></div>
+    <a href="notif-settings.html" class="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">settings</span>Provider Settings</a>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-8">
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Total Sent</p><p class="text-2xl font-bold" id="cntSent">—</p></div>
+      <div class="bg-white border border-amber-200 p-4 rounded-lg"><p class="text-xs font-semibold text-amber-400 uppercase mb-2">Queued</p><p class="text-2xl font-bold text-amber-600" id="cntQueued">—</p></div>
+      <div class="bg-white border border-red-200 p-4 rounded-lg"><p class="text-xs font-semibold text-red-400 uppercase mb-2">Failed</p><p class="text-2xl font-bold text-red-600" id="cntFailed">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Total</p><p class="text-2xl font-bold" id="cntTotal">—</p></div>
+    </div>
+
+    <!-- Generate panel -->
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="text-base font-semibold mb-1">Generate Notifications</h3>
+      <p class="text-sm text-slate-500 mb-5">Messages are generated and queued. Review them before sending.</p>
+
+      <div class="flex gap-6 border-b border-slate-200 mb-5">
+        <button onclick="switchTab('fee')" class="tab active text-sm" id="tab-fee">Fee Reminders</button>
+        <button onclick="switchTab('results')" class="tab text-sm" id="tab-results">Results Ready</button>
+        <button onclick="switchTab('custom')" class="tab text-sm" id="tab-custom">Custom</button>
+      </div>
+
+      <!-- Fee reminders tab -->
+      <div id="panel-fee" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Term</label><select id="feeTermSel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select term…</option></select></div>
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Channel</label><select id="feeChannel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="sms">SMS only</option><option value="email">Email only</option><option value="both">SMS + Email</option></select></div>
+          <div class="flex items-end"><button id="genFeeBtn" onclick="generateFeeReminders()" class="w-full px-4 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors">Generate Reminders</button></div>
+        </div>
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800 flex items-start gap-2">
+          <span class="material-symbols-outlined flex-shrink-0 mt-0.5" style="font-size:16px">info</span>
+          <span>Generates one message per outstanding fee record (pending, partial, or arrears). Personalised with guardian name, student name, fee type, and balance.</span>
+        </div>
+      </div>
+
+      <!-- Results ready tab -->
+      <div id="panel-results" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Term</label><select id="resTermSel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select term…</option></select></div>
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Channel</label><select id="resChannel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="sms">SMS only</option><option value="email">Email only</option><option value="both">SMS + Email</option></select></div>
+          <div class="flex items-end"><button id="genResBtn" onclick="generateResultsAlerts()" class="w-full px-4 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors">Generate Alerts</button></div>
+        </div>
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800 flex items-start gap-2">
+          <span class="material-symbols-outlined flex-shrink-0 mt-0.5" style="font-size:16px">info</span>
+          <span>Notifies all parents/guardians of students enrolled in the selected term that results are now available for collection.</span>
+        </div>
+      </div>
+
+      <!-- Custom tab -->
+      <div id="panel-custom" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Subject / Title</label><input id="customSubject" type="text" placeholder="e.g. PTA Meeting Notice" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+          <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Channel</label><select id="customChannel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="sms">SMS only</option><option value="email">Email only</option><option value="both">SMS + Email</option></select></div>
+          <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Message Body</label><textarea id="customBody" rows="5" placeholder="Dear Parent/Guardian,&#10;&#10;Your message here…" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none resize-none"></textarea></div>
+        </div>
+        <div class="flex gap-3 items-center">
+          <select id="customTermSel" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none flex-1 max-w-xs"><option value="">All active students</option></select>
+          <button id="genCustomBtn" onclick="generateCustom()" class="px-4 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors">Queue Messages</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification queue -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h3 class="text-base font-semibold">Notification Queue</h3>
+          <p class="text-sm text-slate-500">Review messages before dispatching</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <select id="queueFilter" onchange="loadQueue(this.value)" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none">
+            <option value="queued">Queued</option>
+            <option value="sent">Sent</option>
+            <option value="failed">Failed</option>
+            <option value="">All</option>
+          </select>
+          <button id="sendAllBtn" onclick="sendAllQueued()" class="flex items-center gap-1.5 px-3 py-2 bg-green-700 text-white rounded text-sm font-semibold hover:bg-green-800 transition-colors">
+            <span class="material-symbols-outlined" style="font-size:15px">send</span>Send All Queued
+          </button>
+          <button onclick="clearAllQueued()" class="flex items-center gap-1.5 px-3 py-2 border border-red-200 text-red-600 rounded text-sm font-medium hover:bg-red-50 transition-colors">
+            <span class="material-symbols-outlined" style="font-size:15px">delete_sweep</span>Clear Queue
+          </button>
+        </div>
+      </div>
+      <div id="queueList" class="divide-y divide-slate-100 max-h-[560px] overflow-y-auto thin-scrollbar">
+        <div class="px-5 py-8 text-center text-sm text-slate-400">No notifications yet. Generate some above.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div id="previewModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <h3 class="text-base font-semibold">Message Preview</h3>
+      <button onclick="document.getElementById('previewModal').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="grid grid-cols-2 gap-3 text-sm">
+        <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Recipient</p><p class="font-medium" id="pvRecipient">—</p></div>
+        <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Contact</p><p id="pvContact">—</p></div>
+        <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Channel</p><p id="pvChannel">—</p></div>
+        <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Type</p><p id="pvType">—</p></div>
+      </div>
+      <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Subject</p><p class="text-sm" id="pvSubject">—</p></div>
+      <div><p class="text-xs font-semibold text-slate-400 uppercase mb-1">Message</p><pre class="text-sm bg-gray-50 border border-slate-200 rounded p-3 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto thin-scrollbar" id="pvBody">—</pre></div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('previewModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Close</button>
+      <button id="pvSendBtn" onclick="sendOne(_pvId)" class="flex-1 bg-green-700 text-white text-sm font-semibold py-2 rounded hover:bg-green-800 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined" style="font-size:15px">send</span>Send This Message
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _profile = null, _pvId = null
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  await loadTermSelectors()
+  await loadStats()
+  await loadQueue('queued')
+})()
+
+async function loadTermSelectors() {
+  const { data: sessions } = await getClient()
+    .from('academic_sessions')
+    .select('*, terms(*)')
+    .eq('school_id', _profile.school_id)
+    .order('name', { ascending: false })
+
+  ;['feeTermSel','resTermSel','customTermSel'].forEach(id => {
+    const sel = document.getElementById(id)
+    if (!sel) return
+    const isCustom = id === 'customTermSel'
+    if (isCustom) sel.innerHTML = '<option value="">All active students</option>'
+    sessions?.forEach(sess => sess.terms?.forEach(t => {
+      const o = document.createElement('option')
+      o.value = t.id
+      o.textContent = `${t.name} · ${sess.name}`
+      if (t.is_current && !isCustom) o.selected = true
+      sel.appendChild(o)
+    }))
+  })
+}
+
+async function loadStats() {
+  const stats = await NotificationsAPI.getStats(_profile.school_id)
+  document.getElementById('cntSent').textContent = stats.sent
+  document.getElementById('cntQueued').textContent = stats.queued
+  document.getElementById('cntFailed').textContent = stats.failed
+  document.getElementById('cntTotal').textContent = stats.total
+}
+
+function switchTab(name) {
+  ;['fee','results','custom'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === name)
+    document.getElementById('panel-'+t).classList.toggle('hidden', t !== name)
+  })
+}
+
+async function generateFeeReminders() {
+  const termId = document.getElementById('feeTermSel').value
+  if (!termId) { showToast('Select a term first', 'error'); return }
+  const btn = document.getElementById('genFeeBtn')
+  setLoading(btn, true)
+  try {
+    const result = await NotificationsAPI.generateFeeReminders(
+      _profile.school_id, termId, _profile.id,
+      document.getElementById('feeChannel').value
+    )
+    showToast(`${result.generated} fee reminders queued`)
+    await loadStats()
+    await loadQueue('queued')
+  } catch(e) { showToast(e.message || 'Failed', 'error') }
+  setLoading(btn, false)
+}
+
+async function generateResultsAlerts() {
+  const termId = document.getElementById('resTermSel').value
+  if (!termId) { showToast('Select a term first', 'error'); return }
+  const btn = document.getElementById('genResBtn')
+  setLoading(btn, true)
+  try {
+    const result = await NotificationsAPI.generateResultsNotifications(
+      _profile.school_id, termId, _profile.id,
+      document.getElementById('resChannel').value
+    )
+    showToast(`${result.generated} results alerts queued`)
+    await loadStats()
+    await loadQueue('queued')
+  } catch(e) { showToast(e.message || 'Failed', 'error') }
+  setLoading(btn, false)
+}
+
+async function generateCustom() {
+  const subject = document.getElementById('customSubject').value.trim()
+  const body = document.getElementById('customBody').value.trim()
+  const termId = document.getElementById('customTermSel').value
+  const channel = document.getElementById('customChannel').value
+  if (!body) { showToast('Enter a message body', 'error'); return }
+
+  const btn = document.getElementById('genCustomBtn')
+  setLoading(btn, true)
+
+  try {
+    let q = getClient().from('students').select('id,full_name,guardian_name,guardian_phone,guardian_email').eq('school_id', _profile.school_id).eq('is_active', true)
+    if (termId) {
+      const { data: scts } = await getClient().from('student_class_terms').select('student_id').eq('term_id', termId)
+      const ids = (scts||[]).map(s=>s.student_id)
+      if (ids.length) q = q.in('id', ids)
+    }
+    const { data: students } = await q
+    if (!students?.length) { showToast('No students found', 'error'); setLoading(btn, false); return }
+
+    const rows = students.map(s => ({
+      school_id:      _profile.school_id,
+      student_id:     s.id,
+      type:           'general',
+      channel,
+      recipient_name: s.guardian_name,
+      recipient_phone:s.guardian_phone,
+      recipient_email:s.guardian_email,
+      subject:        subject || 'School Notice',
+      body,
+      status:         'queued',
+      created_by:     _profile.id,
+    }))
+
+    const { error } = await getClient().from('notifications').insert(rows)
+    if (error) throw error
+    showToast(`${rows.length} messages queued`)
+    await loadStats()
+    await loadQueue('queued')
+  } catch(e) { showToast(e.message || 'Failed', 'error') }
+  setLoading(btn, false)
+}
+
+async function loadQueue(status = 'queued') {
+  const notifications = await NotificationsAPI.getQueue(_profile.school_id, status)
+  const el = document.getElementById('queueList')
+  if (!notifications.length) {
+    el.innerHTML = `<div class="px-5 py-8 text-center text-sm text-slate-400">No ${status || ''} notifications.</div>`
+    return
+  }
+
+  const typeCfg = {
+    fee_reminder:    { label:'Fee Reminder',  cls:'bg-amber-50 text-amber-700' },
+    fee_overdue:     { label:'Fee Overdue',   cls:'bg-red-50 text-red-700' },
+    results_ready:   { label:'Results Ready', cls:'bg-blue-50 text-blue-700' },
+    promotion_notice:{ label:'Promotion',     cls:'bg-green-50 text-green-700' },
+    general:         { label:'General',       cls:'bg-gray-100 text-gray-600' },
+  }
+  const stCls = {
+    queued: 'bg-amber-50 text-amber-700',
+    sent:   'bg-green-50 text-green-700',
+    failed: 'bg-red-50 text-red-700',
+    skipped:'bg-gray-100 text-gray-500',
+  }
+  const chIcon = { sms:'sms', email:'email', both:'forum' }
+
+  el.innerHTML = notifications.map(n => {
+    const tc = typeCfg[n.type] || typeCfg.general
+    return `<div class="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors">
+      <span class="material-symbols-outlined text-slate-400 flex-shrink-0" style="font-size:18px">${chIcon[n.channel]||'notifications'}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <p class="text-sm font-medium truncate">${n.recipient_name || n.student?.full_name || 'Unknown'}</p>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${tc.cls}">${tc.label}</span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${stCls[n.status]||''}">${n.status.toUpperCase()}</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-0.5 truncate">${n.recipient_phone||n.recipient_email||'No contact'} · ${new Date(n.created_at).toLocaleDateString('en-GB')}</p>
+        <p class="text-xs text-slate-500 mt-0.5 truncate">${n.body.slice(0,80)}…</p>
+        ${n.error_message ? `<p class="text-xs text-red-500 mt-0.5">Error: ${n.error_message}</p>` : ''}
+      </div>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button onclick="showPreview('${n.id}')" class="p-1.5 text-slate-400 hover:text-slate-700 rounded hover:bg-gray-100" title="Preview">
+          <span class="material-symbols-outlined" style="font-size:16px">visibility</span>
+        </button>
+        ${n.status === 'queued' ? `<button onclick="sendOne('${n.id}')" class="p-1.5 text-green-600 hover:text-green-800 rounded hover:bg-green-50" title="Send">
+          <span class="material-symbols-outlined" style="font-size:16px">send</span>
+        </button>` : ''}
+        ${n.status === 'failed' ? `<button onclick="retryOne('${n.id}')" class="p-1.5 text-blue-500 hover:text-blue-700 rounded hover:bg-blue-50" title="Retry">
+          <span class="material-symbols-outlined" style="font-size:16px">refresh</span>
+        </button>` : ''}
+        <button onclick="deleteOne('${n.id}')" class="p-1.5 text-slate-300 hover:text-red-500 rounded hover:bg-red-50" title="Delete">
+          <span class="material-symbols-outlined" style="font-size:16px">delete</span>
+        </button>
+      </div>
+    </div>`
+  }).join('')
+}
+
+async function showPreview(id) {
+  const { data: n } = await getClient().from('notifications').select('*').eq('id', id).single()
+  if (!n) return
+  _pvId = id
+  document.getElementById('pvRecipient').textContent = n.recipient_name || '—'
+  document.getElementById('pvContact').textContent = [n.recipient_phone, n.recipient_email].filter(Boolean).join(' / ') || '—'
+  document.getElementById('pvChannel').textContent = n.channel.toUpperCase()
+  document.getElementById('pvType').textContent = n.type.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+  document.getElementById('pvSubject').textContent = n.subject || '—'
+  document.getElementById('pvBody').textContent = n.body
+  const pvBtn = document.getElementById('pvSendBtn')
+  pvBtn.classList.toggle('hidden', n.status !== 'queued')
+  document.getElementById('previewModal').classList.add('open')
+}
+
+async function sendOne(id) {
+  document.getElementById('previewModal').classList.remove('open')
+  try {
+    const result = await NotificationsAPI.dispatch(_profile.school_id, [id])
+    if (result.fallback) showToast('Marked as sent (Edge Function not deployed yet)', 'info')
+    else showToast(`Sent: ${result.sent} · Failed: ${result.failed}`)
+  } catch(e) { showToast(e.message || 'Send failed', 'error') }
+  await loadStats()
+  await loadQueue(document.getElementById('queueFilter').value)
+}
+
+async function retryOne(id) {
+  await getClient().from('notifications').update({ status: 'queued', error_message: null }).eq('id', id)
+  await sendOne(id)
+}
+
+async function sendAllQueued() {
+  const btn = document.getElementById('sendAllBtn')
+  setLoading(btn, true)
+  try {
+    const queue = await NotificationsAPI.getQueue(_profile.school_id, 'queued')
+    if (!queue.length) { showToast('No queued notifications', 'info'); setLoading(btn, false); return }
+    const ids = queue.map(n => n.id)
+    // Dispatch in batches of 50
+    let totalSent = 0, totalFailed = 0
+    for (let i = 0; i < ids.length; i += 50) {
+      const batch = ids.slice(i, i + 50)
+      const result = await NotificationsAPI.dispatch(_profile.school_id, batch)
+      totalSent += result.sent || 0
+      totalFailed += result.failed || 0
+    }
+    if (totalFailed > 0) showToast(`Sent: ${totalSent} · Failed: ${totalFailed}`, 'info')
+    else showToast(`${totalSent} messages dispatched successfully`)
+  } catch(e) { showToast(e.message || 'Failed', 'error') }
+  await loadStats()
+  await loadQueue(document.getElementById('queueFilter').value)
+  setLoading(btn, false)
+}
+
+async function clearAllQueued() {
+  if (!confirm('Delete all queued notifications? This cannot be undone.')) return
+  const { error } = await getClient().from('notifications').delete().eq('school_id', _profile.school_id).eq('status', 'queued')
+  if (error) { showToast('Failed to clear queue', 'error'); return }
+  showToast('Queue cleared')
+  await loadStats()
+  await loadQueue('queued')
+}
+
+async function deleteOne(id) {
+  await NotificationsAPI.delete(id)
+  await loadStats()
+  await loadQueue(document.getElementById('queueFilter').value)
+}
+</script>
+</body>
+</html>

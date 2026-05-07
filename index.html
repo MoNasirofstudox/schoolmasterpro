@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>
+body{font-family:'Inter',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}
+.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}
+.thin-scrollbar::-webkit-scrollbar{width:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}
+.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}
+.sk{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:4px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}
+.qa{transition:border-color .15s,transform .1s;}.qa:hover{border-color:#6b7280;box-shadow:0 2px 8px rgba(0,0,0,.06);}.qa:active{transform:scale(.98);}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Overview</h2><p class="text-sm text-slate-500" id="headerSub">Loading…</p></div>
+    <div class="flex items-center gap-3">
+      <a href="term-settings.html" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm hover:bg-gray-50 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">tune</span>Term Settings</a>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 space-y-6 max-w-screen-xl w-full mx-auto pb-24 md:pb-8">
+
+    <!-- Exam banner -->
+    <div id="examBanner" class="hidden bg-slate-900 rounded-lg px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded bg-white/10 flex items-center justify-center"><span class="material-symbols-outlined text-white fill-icon">edit_document</span></div>
+        <div><p class="text-[10px] font-bold tracking-widest text-white/50 uppercase">Exam Period Active</p><h3 class="text-white font-semibold text-base leading-tight" id="examBannerTitle">Score Entry Open</h3></div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block"><p class="text-[10px] text-white/50 uppercase font-bold">Subjects Done</p><p class="text-white font-bold text-lg"><span id="subsDone">—</span><span class="text-white/50 font-normal text-sm"> / <span id="subsTotal">—</span></span></p></div>
+        <a href="scores.html" class="bg-white text-black text-sm font-semibold px-4 py-2 rounded hover:bg-white/90 transition-all">Enter Scores</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="statsGrid">
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><div class="sk h-3 w-24 mb-3"></div><div class="sk h-7 w-16 mb-2"></div><div class="sk h-3 w-32"></div></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><div class="sk h-3 w-24 mb-3"></div><div class="sk h-7 w-16 mb-2"></div><div class="sk h-3 w-32"></div></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><div class="sk h-3 w-24 mb-3"></div><div class="sk h-7 w-16 mb-2"></div><div class="sk h-3 w-32"></div></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><div class="sk h-3 w-24 mb-3"></div><div class="sk h-7 w-16 mb-2"></div><div class="sk h-3 w-32"></div></div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 lg:col-span-8 space-y-6">
+
+        <!-- Quick actions -->
+        <div>
+          <h3 class="text-base font-semibold mb-3">Quick Actions</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <button onclick="document.getElementById('enrollModal').classList.add('open')" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">person_add</span></div><div><p class="text-sm font-semibold">Enroll Student</p><p class="text-xs text-slate-500 mt-0.5">Manual registration</p></div></button>
+            <a href="scores.html" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">edit_document</span></div><div><p class="text-sm font-semibold">Enter Scores</p><p class="text-xs text-slate-500 mt-0.5">Manual score entry</p></div></a>
+            <a href="reports.html" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">article</span></div><div><p class="text-sm font-semibold">Report Cards</p><p class="text-xs text-slate-500 mt-0.5">PDF batch export</p></div></a>
+            <a href="fees.html" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">payments</span></div><div><p class="text-sm font-semibold">Record Payment</p><p class="text-xs text-slate-500 mt-0.5">Fee entry</p></div></a>
+            <a href="bulk-upload.html" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">upload_file</span></div><div><p class="text-sm font-semibold">Bulk Upload</p><p class="text-xs text-slate-500 mt-0.5">CSV scores</p></div></a>
+            <a href="notifications.html" class="qa flex flex-col items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg text-left"><div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><span class="material-symbols-outlined" style="font-size:18px">notifications</span></div><div><p class="text-sm font-semibold">Send Reminders</p><p class="text-xs text-slate-500 mt-0.5">SMS / Email</p></div></a>
+          </div>
+        </div>
+
+        <!-- Recent students -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-base font-semibold">Recent Enrollments</h3>
+            <a href="students.html" class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors">View All →</a>
+          </div>
+          <div id="recentStudents" class="divide-y divide-slate-100">
+            <div class="px-5 py-4"><div class="sk h-4 w-3/4 mb-1.5"></div><div class="sk h-3 w-1/2"></div></div>
+            <div class="px-5 py-4"><div class="sk h-4 w-2/3 mb-1.5"></div><div class="sk h-3 w-1/3"></div></div>
+            <div class="px-5 py-4"><div class="sk h-4 w-3/4 mb-1.5"></div><div class="sk h-3 w-1/2"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-4 space-y-6">
+
+        <!-- Fee collection -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Fee Collection</h3><p class="text-xs text-slate-500 mt-0.5">Current term</p></div>
+          <div id="feeWidget" class="p-5"><div class="sk h-20 w-full"></div></div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-base font-semibold">Alerts</h3>
+            <div id="alertDot" class="hidden flex items-center gap-1"><span class="w-2 h-2 bg-red-500 rounded-full pulse"></span></div>
+          </div>
+          <div id="alertsList" class="p-4 space-y-3"><div class="sk h-14 w-full"></div><div class="sk h-14 w-full mt-2"></div></div>
+        </div>
+
+        <!-- Score entry progress -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Score Entry</h3><p id="scoreProgressSub" class="text-xs text-slate-500 mt-0.5">Current term</p></div>
+          <div id="scoreProgress" class="p-5"><div class="sk h-16 w-full"></div></div>
+          <div class="px-5 pb-4"><a href="scores.html" class="w-full flex items-center justify-center gap-2 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">edit_document</span>Go to Score Entry</a></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-white border-t border-slate-200">
+  <a href="index.html"    class="flex flex-col items-center gap-0.5 text-slate-900"><span class="material-symbols-outlined fill-icon" style="font-size:22px">dashboard</span><span class="text-[10px] font-semibold">Home</span></a>
+  <a href="students.html" class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">group</span><span class="text-[10px]">Students</span></a>
+  <a href="scores.html"   class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">edit_document</span><span class="text-[10px]">Scores</span></a>
+  <a href="fees.html"     class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">payments</span><span class="text-[10px]">Fees</span></a>
+</nav>
+
+<!-- ENROLL MODAL -->
+<div id="enrollModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Enroll Student</h3><button onclick="document.getElementById('enrollModal').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Full Name</label><input id="enrName" type="text" placeholder="e.g. Amara Chioma Eze" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Date of Birth</label><input id="enrDob" type="date" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-slate-700"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Gender</label><select id="enrGender" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Class</label><select id="enrClass" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">Loading…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Guardian Phone</label><input id="enrPhone" type="tel" placeholder="080XXXXXXXX" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-slate-700"/></div>
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Guardian Name</label><input id="enrGuardian" type="text" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-slate-700"/></div>
+      </div>
+      <p class="text-xs text-slate-400 bg-gray-50 rounded px-3 py-2">Student ID auto-generated. Fee schedule attaches automatically.</p>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('enrollModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="enrBtn" onclick="enrollStudent()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Enroll Student</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _profile = null
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  const [term, classes] = await Promise.all([
+    SetupAPI.getCurrentTerm(_profile.school_id),
+    SetupAPI.getClasses(_profile.school_id),
+  ])
+  if (term) {
+    const label = `${term.name} · ${term.session?.name}`
+    document.getElementById('headerSub').textContent = label
+    document.getElementById('sidebarTermLabel').textContent = `${_profile.school.plan.toUpperCase()} · ${label}`
+    if (term.is_exam_open) {
+      document.getElementById('examBanner').classList.remove('hidden')
+      document.getElementById('examBannerTitle').textContent = `${term.name} Finals — Score Entry Open`
+    }
+  }
+  // Populate class selector
+  const cs = document.getElementById('enrClass')
+  cs.innerHTML = '<option value="">Select class</option>' + (classes||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')
+
+  await loadStats(term)
+  await loadRecentStudents()
+})()
+
+async function loadStats(term) {
+  try {
+    const stats = await DashboardAPI.getStats(_profile.school_id)
+    const cr = Math.round((stats.total_billed > 0 ? stats.total_collected / stats.total_billed : 0) * 100)
+
+    document.getElementById('examBanner').classList.toggle('hidden', !term?.is_exam_open)
+    document.getElementById('subsDone').textContent = stats.subjects_complete
+    document.getElementById('subsTotal').textContent = stats.subjects_complete + stats.subjects_pending
+
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Total Students</p><p class="text-2xl font-bold">${stats.total_students.toLocaleString()}</p><p class="text-xs text-slate-400 mt-1">${stats.active_students.toLocaleString()} active</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Fee Collection</p><p class="text-2xl font-bold">${cr}%</p><div class="mt-2"><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="bg-black h-full rounded-full" style="width:${cr}%"></div></div><p class="text-xs text-slate-400 mt-1">${formatNaira(stats.total_collected)} / ${formatNaira(stats.total_billed)}</p></div></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Scores Entered</p><p class="text-2xl font-bold">${stats.subjects_complete}/${stats.subjects_complete+stats.subjects_pending}</p><p class="text-xs text-amber-600 mt-1">${stats.subjects_pending} subjects pending</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Arrears</p><p class="text-2xl font-bold text-red-600">${stats.students_with_arrears}</p><p class="text-xs text-red-500 mt-1">${formatNaira(stats.arrears_amount)} outstanding</p></div>`
+
+    // Fee widget
+    document.getElementById('feeWidget').innerHTML = `
+      <div class="text-center mb-3"><p class="text-3xl font-bold ${cr>=80?'text-green-700':cr>=60?'text-amber-600':'text-red-600'}">${cr}%</p><p class="text-xs text-slate-500">Collection Rate</p></div>
+      <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-2"><div class="h-full rounded-full ${cr>=80?'bg-green-600':cr>=60?'bg-amber-500':'bg-red-500'}" style="width:${cr}%"></div></div>
+      <div class="flex justify-between text-xs text-slate-500 mt-1"><span>Collected: ${formatNaira(stats.total_collected)}</span><span>Due: ${formatNaira(stats.total_billed)}</span></div>
+      <div class="mt-3 p-2.5 bg-gray-50 rounded border border-slate-100 flex justify-between text-xs"><span class="text-slate-500">Outstanding</span><span class="font-bold text-amber-600">${formatNaira(stats.total_billed - stats.total_collected)}</span></div>`
+
+    // Score progress
+    const total = stats.subjects_complete + stats.subjects_pending
+    const pct = total > 0 ? Math.round(stats.subjects_complete / total * 100) : 0
+    document.getElementById('scoreProgressSub').textContent = stats.current_term || 'Current term'
+    document.getElementById('scoreProgress').innerHTML = `
+      <div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>${stats.subjects_complete} complete</span><span>${stats.subjects_pending} pending</span></div>
+      <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="h-full rounded-full ${pct===100?'bg-green-600':'bg-black'}" style="width:${pct}%"></div></div>
+      <p class="text-xs text-slate-400 mt-2">${pct}% of subjects have locked results</p>`
+
+    // Alerts
+    const alerts = []
+    if (stats.students_with_arrears > 0) alerts.push({ t:'error', i:'warning', title:`${stats.students_with_arrears} students with arrears`, sub:`${formatNaira(stats.arrears_amount)} outstanding` })
+    if (stats.subjects_pending > 0) alerts.push({ t:'warn', i:'schedule', title:`${stats.subjects_pending} subjects awaiting scores`, sub:'Exam period is open' })
+    if (!alerts.length) alerts.push({ t:'ok', i:'check_circle', title:'All clear', sub:'No pending actions' })
+    if (alerts.filter(a=>a.t!=='ok').length > 0) { document.getElementById('alertDot').classList.remove('hidden') }
+    const cls = { error:'bg-red-50 border-red-400', warn:'bg-amber-50 border-amber-400', ok:'bg-gray-50 border-slate-200' }
+    const icls = { error:'text-red-500', warn:'text-amber-500', ok:'text-slate-400' }
+    document.getElementById('alertsList').innerHTML = alerts.map(a=>`
+      <div class="flex gap-3 p-3 border-l-4 rounded-r ${cls[a.t]}">
+        <span class="material-symbols-outlined ${icls[a.t]} flex-shrink-0 mt-0.5" style="font-size:18px">${a.i}</span>
+        <div><p class="text-sm font-semibold text-slate-800">${a.title}</p><p class="text-xs text-slate-500 mt-0.5">${a.sub}</p></div>
+      </div>`).join('')
+  } catch(e) { console.error('Stats error:', e) }
+}
+
+async function loadRecentStudents() {
+  try {
+    const { data } = await StudentsAPI.list(_profile.school_id, { limit: 5 })
+    const sc = { paid:'bg-green-50 text-green-700', partial:'bg-blue-50 text-blue-700', pending:'bg-amber-50 text-amber-700', arrears:'bg-red-50 text-red-700' }
+    document.getElementById('recentStudents').innerHTML = (data||[]).map(s => {
+      const ini = s.full_name.split(' ').map(n=>n[0]).join('').slice(0,2)
+      const ct = s.student_class_terms?.find(t=>t.term?.is_current)
+      const fs = s.fee_records?.find(f=>f.term?.is_current)
+      return `<div class="flex items-center px-5 py-3 hover:bg-gray-50 transition-colors cursor-pointer" onclick="location='student-profile.html?id=${s.id}'">
+        <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">${ini}</div>
+        <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">${s.full_name}</p><p class="text-xs text-slate-400">${ct?.class?.name||'—'} · ${s.student_code}</p></div>
+        ${fs?`<span class="text-[10px] font-bold px-2 py-0.5 rounded ${sc[fs.status]||''}">${fs.status.toUpperCase()}</span>`:''}
+      </div>`
+    }).join('') || '<div class="px-5 py-4 text-sm text-slate-400">No students yet.</div>'
+  } catch(e) { console.error(e) }
+}
+
+async function enrollStudent() {
+  const btn = document.getElementById('enrBtn')
+  setLoading(btn, true)
+  try {
+    await StudentsAPI.create(_profile.school_id, {
+      full_name:      document.getElementById('enrName').value.trim(),
+      date_of_birth:  document.getElementById('enrDob').value || null,
+      gender:         document.getElementById('enrGender').value || null,
+      class_id:       document.getElementById('enrClass').value,
+      guardian_phone: document.getElementById('enrPhone').value || null,
+      guardian_name:  document.getElementById('enrGuardian').value || null,
+    })
+    document.getElementById('enrollModal').classList.remove('open')
+    showToast('Student enrolled')
+    await loadRecentStudents()
+    const term = await SetupAPI.getCurrentTerm(_profile.school_id)
+    await loadStats(term)
+  } catch(e) { showToast(e.message||'Failed','error') }
+  setLoading(btn, false)
+}
+</script>
+</body>
+</html>

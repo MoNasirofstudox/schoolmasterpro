@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Staff Register</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Staff Register</h2><p class="text-sm text-slate-500" id="headerSub">Teaching and non-teaching staff</p></div>
+    <button onclick="openAddModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">person_add</span>Add Staff</button>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-24 md:pb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Total Staff</p><p class="text-2xl font-bold" id="cntTotal">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Teaching</p><p class="text-2xl font-bold" id="cntTeaching">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Admin/Support</p><p class="text-2xl font-bold" id="cntAdmin">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-amber-400 uppercase mb-2">Inactive</p><p class="text-2xl font-bold text-amber-600" id="cntInactive">—</p></div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-48 flex items-center gap-2 border border-slate-200 rounded px-3 py-2 bg-gray-50">
+          <span class="material-symbols-outlined text-slate-400" style="font-size:17px">search</span>
+          <input id="searchInp" type="text" placeholder="Search staff name…" class="flex-1 bg-transparent text-sm focus:outline-none" oninput="filterStaff(this.value)"/>
+        </div>
+        <select id="typeFilter" onchange="filterStaff()" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none">
+          <option value="">All Types</option><option value="teaching">Teaching</option><option value="admin">Admin</option><option value="support">Support</option>
+        </select>
+        <select id="deptFilter" onchange="filterStaff()" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none" id="deptFilter">
+          <option value="">All Departments</option>
+        </select>
+      </div>
+      <div class="overflow-x-auto thin-scrollbar">
+        <table class="w-full text-left">
+          <thead><tr class="bg-gray-50 border-b border-slate-200">
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Staff Member</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Type</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Department</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Subjects / Role</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Class Teacher</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Contact</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Status</th>
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase text-right">Actions</th>
+          </tr></thead>
+          <tbody id="staffTable" class="divide-y divide-slate-100"><tr><td colspan="8" class="px-5 py-8 text-center text-sm text-slate-400">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div id="staffModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <h3 class="text-base font-semibold" id="modalTitle">Add Staff Member</h3>
+      <button onclick="document.getElementById('staffModal').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="p-5 space-y-4 overflow-y-auto max-h-[65vh] thin-scrollbar">
+      <input type="hidden" id="editStaffId"/>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Full Name</label><input id="sfName" type="text" placeholder="e.g. Mr. Emeka Nwachukwu" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Staff Type</label><select id="sfType" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="teaching">Teaching</option><option value="admin">Admin</option><option value="support">Support</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Department</label><input id="sfDept" type="text" placeholder="e.g. Mathematics" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Subjects Taught <span class="text-slate-400 font-normal normal-case">(comma separated)</span></label><input id="sfSubjects" type="text" placeholder="e.g. Mathematics, Further Mathematics" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Class Teacher Of</label><select id="sfClassTeacher" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">None</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Date Joined</label><input id="sfJoined" type="date" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Phone</label><input id="sfPhone" type="tel" placeholder="080XXXXXXXX" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Email</label><input id="sfEmail" type="email" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div class="col-span-2 hidden" id="deactivateRow">
+          <label class="flex items-center gap-2 cursor-pointer p-3 bg-red-50 border border-red-200 rounded">
+            <input type="checkbox" id="sfInactive" class="w-4 h-4 accent-red-600"/>
+            <span class="text-sm text-red-700">Mark as inactive</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('staffModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="sfSaveBtn" onclick="saveStaff()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _profile = null, _allStaff = [], _classes = []
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  _classes = await SetupAPI.getClasses(_profile.school_id)
+  const cs = document.getElementById('sfClassTeacher')
+  _classes?.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; cs.appendChild(o) })
+  await loadStaff()
+})()
+
+async function loadStaff() {
+  const { data, error } = await getClient()
+    .from('staff')
+    .select('*, class_teacher:classes(name)')
+    .eq('school_id', _profile.school_id)
+    .order('full_name')
+
+  if (error) { showToast('Failed to load staff', 'error'); return }
+  _allStaff = data || []
+
+  // Stats
+  document.getElementById('cntTotal').textContent = _allStaff.length
+  document.getElementById('cntTeaching').textContent = _allStaff.filter(s => s.staff_type === 'teaching').length
+  document.getElementById('cntAdmin').textContent = _allStaff.filter(s => ['admin','support'].includes(s.staff_type)).length
+  document.getElementById('cntInactive').textContent = _allStaff.filter(s => !s.is_active).length
+  document.getElementById('headerSub').textContent = `${_allStaff.length} staff members`
+
+  // Populate dept filter
+  const depts = [...new Set(_allStaff.map(s => s.department).filter(Boolean))]
+  const df = document.getElementById('deptFilter')
+  df.innerHTML = '<option value="">All Departments</option>' + depts.map(d => `<option value="${d}">${d}</option>`).join('')
+
+  renderTable(_allStaff)
+}
+
+function filterStaff(search) {
+  const q = (typeof search === 'string' ? search : document.getElementById('searchInp').value).toLowerCase()
+  const type = document.getElementById('typeFilter').value
+  const dept = document.getElementById('deptFilter').value
+  const filtered = _allStaff.filter(s => {
+    if (q && !s.full_name.toLowerCase().includes(q)) return false
+    if (type && s.staff_type !== type) return false
+    if (dept && s.department !== dept) return false
+    return true
+  })
+  renderTable(filtered)
+}
+
+function renderTable(staff) {
+  const tc = { teaching: 'bg-blue-50 text-blue-700', admin: 'bg-purple-50 text-purple-700', support: 'bg-gray-100 text-gray-600' }
+  document.getElementById('staffTable').innerHTML = staff.map(s => {
+    const ini = s.full_name.replace(/^(Mr\.|Mrs\.|Miss|Dr\.)\s*/i,'').split(' ').map(n=>n[0]).join('').slice(0,2)
+    return `<tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3.5"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">${ini}</div><div><p class="text-sm font-medium">${s.full_name}</p><p class="text-xs text-slate-400">${s.date_joined ? 'Joined '+new Date(s.date_joined).toLocaleDateString('en-GB',{month:'short',year:'numeric'}) : '—'}</p></div></div></td>
+      <td class="px-3 py-3.5"><span class="text-[10px] font-bold px-2 py-0.5 rounded capitalize ${tc[s.staff_type]||''}">${s.staff_type}</span></td>
+      <td class="px-3 py-3.5 text-sm text-slate-600">${s.department||'—'}</td>
+      <td class="px-3 py-3.5 text-sm text-slate-500 max-w-[160px] truncate">${s.subjects_taught||'—'}</td>
+      <td class="px-3 py-3.5 text-sm text-slate-500">${s.class_teacher?.name||'—'}</td>
+      <td class="px-3 py-3.5 text-sm text-slate-500">${s.phone||s.email||'—'}</td>
+      <td class="px-3 py-3.5 text-center"><span class="text-[10px] font-bold px-2 py-0.5 rounded ${s.is_active?'bg-green-50 text-green-700':'bg-slate-100 text-slate-500'}">${s.is_active?'ACTIVE':'INACTIVE'}</span></td>
+      <td class="px-5 py-3.5 text-right"><div class="flex justify-end gap-1">
+        <button onclick="openEditModal('${s.id}')" class="p-1.5 text-slate-400 hover:text-slate-700 rounded hover:bg-gray-100"><span class="material-symbols-outlined" style="font-size:17px">edit</span></button>
+        <button onclick="toggleActive('${s.id}',${s.is_active})" class="p-1.5 ${s.is_active?'text-red-400 hover:text-red-600':'text-green-500 hover:text-green-700'} rounded hover:bg-gray-100"><span class="material-symbols-outlined" style="font-size:17px">${s.is_active?'person_off':'person_check'}</span></button>
+      </div></td>
+    </tr>`
+  }).join('') || '<tr><td colspan="8" class="px-5 py-8 text-center text-sm text-slate-400">No staff found.</td></tr>'
+}
+
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Add Staff Member'
+  document.getElementById('editStaffId').value = ''
+  document.getElementById('sfName').value = ''
+  document.getElementById('sfType').value = 'teaching'
+  document.getElementById('sfDept').value = ''
+  document.getElementById('sfSubjects').value = ''
+  document.getElementById('sfClassTeacher').value = ''
+  document.getElementById('sfJoined').value = ''
+  document.getElementById('sfPhone').value = ''
+  document.getElementById('sfEmail').value = ''
+  document.getElementById('sfInactive').checked = false
+  document.getElementById('deactivateRow').classList.add('hidden')
+  document.getElementById('staffModal').classList.add('open')
+}
+
+function openEditModal(id) {
+  const s = _allStaff.find(x => x.id === id)
+  if (!s) return
+  document.getElementById('modalTitle').textContent = 'Edit Staff Member'
+  document.getElementById('editStaffId').value = s.id
+  document.getElementById('sfName').value = s.full_name || ''
+  document.getElementById('sfType').value = s.staff_type || 'teaching'
+  document.getElementById('sfDept').value = s.department || ''
+  document.getElementById('sfSubjects').value = s.subjects_taught || ''
+  document.getElementById('sfClassTeacher').value = s.class_teacher_of || ''
+  document.getElementById('sfJoined').value = s.date_joined || ''
+  document.getElementById('sfPhone').value = s.phone || ''
+  document.getElementById('sfEmail').value = s.email || ''
+  document.getElementById('sfInactive').checked = !s.is_active
+  document.getElementById('deactivateRow').classList.remove('hidden')
+  document.getElementById('staffModal').classList.add('open')
+}
+
+async function saveStaff() {
+  const btn = document.getElementById('sfSaveBtn')
+  setLoading(btn, true)
+  const editId = document.getElementById('editStaffId').value
+  const payload = {
+    full_name:        document.getElementById('sfName').value.trim(),
+    staff_type:       document.getElementById('sfType').value,
+    department:       document.getElementById('sfDept').value.trim() || null,
+    subjects_taught:  document.getElementById('sfSubjects').value.trim() || null,
+    class_teacher_of: document.getElementById('sfClassTeacher').value || null,
+    date_joined:      document.getElementById('sfJoined').value || null,
+    phone:            document.getElementById('sfPhone').value.trim() || null,
+    email:            document.getElementById('sfEmail').value.trim() || null,
+    is_active:        !document.getElementById('sfInactive').checked,
+  }
+  try {
+    if (editId) {
+      await StaffAPI.update(editId, payload)
+      showToast('Staff member updated')
+    } else {
+      await StaffAPI.create(_profile.school_id, payload)
+      showToast('Staff member added')
+    }
+    document.getElementById('staffModal').classList.remove('open')
+    await loadStaff()
+  } catch(e) { showToast(e.message || 'Failed', 'error') }
+  setLoading(btn, false)
+}
+
+async function toggleActive(id, currentlyActive) {
+  if (!confirm(currentlyActive ? 'Deactivate this staff member?' : 'Reactivate this staff member?')) return
+  try {
+    await StaffAPI.update(id, { is_active: !currentlyActive })
+    showToast(currentlyActive ? 'Staff member deactivated' : 'Staff member reactivated')
+    await loadStaff()
+  } catch(e) { showToast(e.message, 'error') }
+}
+</script>
+</body>
+</html>

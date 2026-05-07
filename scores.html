@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Score Entry</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>
+body{font-family:'Inter',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}
+.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}
+.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}
+.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}
+.score-input{transition:border-color .15s;}.score-input:focus{border-color:#000;outline:none;box-shadow:0 0 0 2px rgba(0,0,0,0.08);}
+.score-input.err{border-color:#dc2626;background:#fff5f5;}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"    class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"   class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Score Entry</h2><p class="text-sm text-slate-500" id="headerSub">Select class and subject to begin</p></div>
+    <div class="flex items-center gap-3">
+      <button id="lockBtn" onclick="lockAssessment()" class="hidden items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">lock</span>Lock Results</button>
+      <button id="saveBtn" onclick="saveScores()" class="hidden items-center gap-1.5 px-4 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save Scores</button>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-24 md:pb-8">
+
+    <!-- Selector -->
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Term</label>
+          <select id="selTerm" onchange="onFilterChange()" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select term…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Class</label>
+          <select id="selClass" onchange="onFilterChange()" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select class…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Subject</label>
+          <select id="selSubject" onchange="onFilterChange()" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select subject…</option></select></div>
+        <div class="flex items-end"><button onclick="loadScoreEntry()" class="w-full px-4 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors">Load Students</button></div>
+      </div>
+      <div id="confirmBanner" class="hidden mt-4 p-3 bg-amber-50 border border-amber-200 rounded flex items-start gap-2 text-sm text-amber-800">
+        <span class="material-symbols-outlined flex-shrink-0 mt-0.5" style="font-size:16px">info</span>
+        <span>Confirm: <strong id="confirmLabel">—</strong></span>
+        <button onclick="document.getElementById('confirmBanner').classList.add('hidden')" class="ml-auto text-amber-500 hover:text-amber-700"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+      </div>
+    </div>
+
+    <!-- Score table -->
+    <div id="scoreTableWrap" class="hidden bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
+        <div><h3 class="text-base font-semibold" id="tableTitle">—</h3><p class="text-sm text-slate-500" id="tableSubtitle">—</p></div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-sm text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span><span id="countEntered">0</span> entered</div>
+          <div class="flex items-center gap-2 text-sm text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span><span id="countPending">0</span> pending</div>
+          <span id="statusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700">IN PROGRESS</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto thin-scrollbar">
+        <table class="w-full text-left">
+          <thead><tr class="bg-gray-50 border-b border-slate-200">
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase w-8">#</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Student</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center" id="hCA1">CA1 /20</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center" id="hCA2">CA2 /20</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center" id="hExam">Exam /60</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Total</th>
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Grade</th>
+          </tr></thead>
+          <tbody id="scoreBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+      <div class="px-5 py-4 border-t border-slate-100 bg-gray-50 flex items-center justify-between flex-wrap gap-3">
+        <p class="text-xs text-slate-500">All fields must be filled before locking. Locking is permanent.</p>
+        <div class="flex gap-3">
+          <button onclick="clearAll()" class="px-4 py-2 border border-slate-200 text-sm font-medium rounded hover:bg-gray-100 transition-colors">Clear All</button>
+          <button onclick="saveScores()" class="px-4 py-2 bg-black text-white text-sm font-semibold rounded hover:bg-slate-800 transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save Scores</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject progress -->
+    <div id="subjectProgressWrap" class="hidden bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">All Subjects — Progress</h3></div>
+      <div id="subjectProgressList" class="divide-y divide-slate-100"></div>
+    </div>
+  </main>
+</div>
+
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-white border-t border-slate-200">
+  <a href="index.html"    class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">dashboard</span><span class="text-[10px]">Home</span></a>
+  <a href="students.html" class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">group</span><span class="text-[10px]">Students</span></a>
+  <a href="scores.html"   class="flex flex-col items-center gap-0.5 text-slate-900"><span class="material-symbols-outlined fill-icon" style="font-size:22px">edit_document</span><span class="text-[10px] font-semibold">Scores</span></a>
+  <a href="fees.html"     class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">payments</span><span class="text-[10px]">Fees</span></a>
+</nav>
+
+<script>
+let _profile = null, _assessment = null, _students = [], _maxCA1=20, _maxCA2=20, _maxExam=60
+
+;(async()=>{
+  _profile = await initPage()
+  if(!_profile) return
+  await loadSelectors()
+  await loadSubjectProgress()
+})()
+
+async function loadSelectors(){
+  const schoolId = _profile.school_id
+  const{data:sessions}=await getClient().from('academic_sessions').select('*,terms(*)').eq('school_id',schoolId).order('name',{ascending:false})
+  const ts=document.getElementById('selTerm')
+  sessions?.forEach(sess=>sess.terms?.forEach(t=>{
+    const o=document.createElement('option');o.value=t.id;o.textContent=`${t.name} · ${sess.name}`;if(t.is_current)o.selected=true;ts.appendChild(o)
+  }))
+  const classes=await SetupAPI.getClasses(schoolId)
+  const cs=document.getElementById('selClass')
+  classes?.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;cs.appendChild(o)})
+  const subjects=await SetupAPI.getSubjects(schoolId)
+  const ss=document.getElementById('selSubject')
+  subjects?.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o)})
+}
+
+function onFilterChange(){
+  const termId=document.getElementById('selTerm').value
+  const classId=document.getElementById('selClass').value
+  const subjectId=document.getElementById('selSubject').value
+  if(termId&&classId&&subjectId){
+    const tl=document.getElementById('selTerm').selectedOptions[0]?.text||''
+    const cl=document.getElementById('selClass').selectedOptions[0]?.text||''
+    const sl=document.getElementById('selSubject').selectedOptions[0]?.text||''
+    document.getElementById('confirmLabel').textContent=`${cl} · ${sl} · ${tl}`
+    document.getElementById('confirmBanner').classList.remove('hidden')
+  }
+}
+
+async function loadScoreEntry(){
+  const termId=document.getElementById('selTerm').value
+  const classId=document.getElementById('selClass').value
+  const subjectId=document.getElementById('selSubject').value
+  if(!termId||!classId||!subjectId){showToast('Select term, class and subject first','error');return}
+
+  // Get or create assessment
+  let{data:existing}=await getClient().from('assessments').select('*').eq('term_id',termId).eq('class_id',classId).eq('subject_id',subjectId).maybeSingle()
+  if(!existing){
+    const{data:term}=await getClient().from('terms').select('is_exam_open').eq('id',termId).single()
+    if(!term?.is_exam_open){showToast('Exam period is not open for this term','error');return}
+    const{data:created,error}=await getClient().from('assessments').insert({term_id:termId,class_id:classId,subject_id:subjectId,created_by:_profile.id}).select().single()
+    if(error){showToast('Failed to create assessment','error');return}
+    existing=created
+  }
+  _assessment=existing
+
+  // Get class-subject weights
+  const{data:cs}=await getClient().from('class_subjects').select('*').eq('class_id',classId).eq('subject_id',subjectId).maybeSingle()
+  _maxCA1=cs?.ca1_max??20; _maxCA2=cs?.ca2_max??20; _maxExam=cs?.exam_max??60
+  document.getElementById('hCA1').textContent=`CA1 /${_maxCA1}`
+  document.getElementById('hCA2').textContent=`CA2 /${_maxCA2}`
+  document.getElementById('hExam').textContent=`Exam /${_maxExam}`
+
+  // Get enrolled students + existing scores
+  const{data:enrolled}=await getClient().from('student_class_terms').select('student:students(id,full_name,student_code)').eq('term_id',termId).eq('class_id',classId)
+  const{data:scores}=await getClient().from('score_entries').select('*').eq('assessment_id',existing.id)
+  _students=enrolled?.map(e=>e.student).filter(Boolean)||[]
+  const scoreMap={}
+  scores?.forEach(s=>{scoreMap[s.student_id]=s})
+
+  // Update UI
+  const cl=document.getElementById('selClass').selectedOptions[0]?.text
+  const sl=document.getElementById('selSubject').selectedOptions[0]?.text
+  document.getElementById('tableTitle').textContent=`${cl} — ${sl}`
+  document.getElementById('tableSubtitle').textContent=`${_students.length} students enrolled`
+  document.getElementById('headerSub').textContent=`${cl} · ${sl}`
+
+  const locked=existing.status==='locked'
+  document.getElementById('statusBadge').textContent=locked?'LOCKED':'IN PROGRESS'
+  document.getElementById('statusBadge').className=`text-[10px] font-bold px-2 py-0.5 rounded ${locked?'bg-slate-100 text-slate-500':'bg-amber-50 text-amber-700'}`
+  document.getElementById('saveBtn').classList.toggle('hidden',locked)
+  document.getElementById('saveBtn').classList.toggle('flex',!locked)
+  document.getElementById('lockBtn').classList.toggle('hidden',locked)
+  document.getElementById('lockBtn').classList.toggle('flex',!locked)
+
+  let entered=0
+  const gc=g=>({A:'bg-green-100 text-green-800',B:'bg-blue-100 text-blue-800',C:'bg-amber-100 text-amber-800',D:'bg-orange-100 text-orange-800',E:'bg-red-100 text-red-700',F:'bg-red-200 text-red-900'}[g]||'bg-slate-100 text-slate-500')
+  document.getElementById('scoreBody').innerHTML=_students.map((s,i)=>{
+    const sc=scoreMap[s.id]
+    const hasAll=sc?.ca1!=null&&sc?.ca2!=null&&sc?.exam!=null
+    if(hasAll)entered++
+    const ini=s.full_name.split(' ').map(n=>n[0]).join('').slice(0,2)
+    const disabled=locked?'disabled':'';
+    return`<tr>
+      <td class="px-5 py-3 text-xs text-slate-400">${i+1}</td>
+      <td class="px-3 py-3"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">${ini}</div><div><p class="text-sm font-medium">${s.full_name}</p><p class="text-xs text-slate-400">${s.student_code}</p></div></div></td>
+      <td class="px-3 py-3 text-center"><input type="number" min="0" max="${_maxCA1}" value="${sc?.ca1??''}" placeholder="—" ${disabled} class="score-input w-14 border border-slate-200 rounded px-1.5 py-1.5 text-center text-sm" data-sid="${s.id}" data-field="ca1" oninput="recalcRow(this,${_maxCA1})"/></td>
+      <td class="px-3 py-3 text-center"><input type="number" min="0" max="${_maxCA2}" value="${sc?.ca2??''}" placeholder="—" ${disabled} class="score-input w-14 border border-slate-200 rounded px-1.5 py-1.5 text-center text-sm" data-sid="${s.id}" data-field="ca2" oninput="recalcRow(this,${_maxCA2})"/></td>
+      <td class="px-3 py-3 text-center"><input type="number" min="0" max="${_maxExam}" value="${sc?.exam??''}" placeholder="—" ${disabled} class="score-input w-14 border border-slate-200 rounded px-1.5 py-1.5 text-center text-sm" data-sid="${s.id}" data-field="exam" oninput="recalcRow(this,${_maxExam})"/></td>
+      <td class="px-3 py-3 text-center"><span id="total-${s.id}" class="text-sm font-bold">${sc?.total??'—'}</span></td>
+      <td class="px-5 py-3 text-center"><span id="grade-${s.id}" class="text-[10px] font-bold px-2 py-0.5 rounded ${sc?.grade?gc(sc.grade):'bg-slate-100 text-slate-400'}">${sc?.grade??'—'}</span></td>
+    </tr>`
+  }).join('')
+
+  document.getElementById('countEntered').textContent=entered
+  document.getElementById('countPending').textContent=_students.length-entered
+  document.getElementById('scoreTableWrap').classList.remove('hidden')
+  document.getElementById('subjectProgressWrap').classList.remove('hidden')
+  await loadSubjectProgress()
+}
+
+function recalcRow(input,max){
+  const v=parseInt(input.value)
+  input.classList.toggle('err',input.value!==''&&(v<0||v>max))
+  const sid=input.dataset.sid
+  const row=input.closest('tr')
+  const inputs=[...row.querySelectorAll('input')]
+  const vals=inputs.map(i=>i.value===''?null:parseInt(i.value))
+  if(vals.every(v=>v!==null)&&!vals.some(isNaN)){
+    const total=vals.reduce((a,b)=>a+b,0)
+    const grade=total>=75?'A':total>=65?'B':total>=55?'C':total>=45?'D':total>=40?'E':'F'
+    const gc={A:'bg-green-100 text-green-800',B:'bg-blue-100 text-blue-800',C:'bg-amber-100 text-amber-800',D:'bg-orange-100 text-orange-800',E:'bg-red-100 text-red-700',F:'bg-red-200 text-red-900'}
+    document.getElementById('total-'+sid).textContent=total
+    const gel=document.getElementById('grade-'+sid)
+    gel.textContent=grade;gel.className='text-[10px] font-bold px-2 py-0.5 rounded '+(gc[grade]||'')
+  }else{
+    document.getElementById('total-'+sid).textContent='—'
+    const gel=document.getElementById('grade-'+sid)
+    gel.textContent='—';gel.className='text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-400'
+  }
+  // Update counts
+  const allRows=[...document.querySelectorAll('#scoreBody tr')]
+  let entered=0
+  allRows.forEach(r=>{const ins=[...r.querySelectorAll('input')];if(ins.every(i=>i.value!==''))entered++})
+  document.getElementById('countEntered').textContent=entered
+  document.getElementById('countPending').textContent=_students.length-entered
+}
+
+async function saveScores(){
+  if(!_assessment){showToast('Load students first','error');return}
+  if(document.querySelectorAll('.score-input.err').length){showToast('Fix validation errors first','error');return}
+  const btn=document.getElementById('saveBtn')
+  setLoading(btn,true)
+  const entries=[]
+  _students.forEach(s=>{
+    const row=document.querySelector(`[data-sid="${s.id}"][data-field="ca1"]`)?.closest('tr')
+    if(!row)return
+    const inputs=[...row.querySelectorAll('input')]
+    const[ca1,ca2,exam]=inputs.map(i=>i.value===''?null:parseInt(i.value))
+    if(ca1!=null||ca2!=null||exam!=null)entries.push({student_id:s.id,ca1,ca2,exam})
+  })
+  try{
+    await AssessmentsAPI.bulkSave(_assessment.id,entries)
+    showToast('Scores saved successfully')
+    await loadScoreEntry()
+  }catch(e){showToast(e.message||'Save failed','error')}
+  setLoading(btn,false)
+}
+
+async function lockAssessment(){
+  if(!_assessment)return
+  if(!confirm('Lock this assessment? Scores cannot be edited after locking.'))return
+  const btn=document.getElementById('lockBtn')
+  setLoading(btn,true)
+  try{
+    await AssessmentsAPI.lock(_assessment.id)
+    showToast('Assessment locked')
+    await loadScoreEntry()
+  }catch(e){showToast(e.message,'error')}
+  setLoading(btn,false)
+}
+
+function clearAll(){
+  document.querySelectorAll('.score-input').forEach(i=>{i.value='';i.classList.remove('err')})
+  _students.forEach(s=>{
+    document.getElementById('total-'+s.id).textContent='—'
+    const g=document.getElementById('grade-'+s.id)
+    g.textContent='—';g.className='text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-400'
+  })
+  document.getElementById('countEntered').textContent='0'
+  document.getElementById('countPending').textContent=_students.length
+}
+
+async function loadSubjectProgress(){
+  if(!_profile)return
+  const termId=document.getElementById('selTerm').value
+  if(!termId)return
+  const{data:assessments}=await getClient().from('assessments').select('*,class:classes(name),subject:subjects(name),score_entries(count)').eq('term_id',termId)
+  if(!assessments?.length)return
+  document.getElementById('subjectProgressWrap').classList.remove('hidden')
+  document.getElementById('subjectProgressList').innerHTML=assessments.map(a=>{
+    const locked=a.status==='locked'
+    const cnt=a.score_entries?.[0]?.count||0
+    return`<div class="grid grid-cols-12 gap-4 px-5 py-3 items-center hover:bg-gray-50 transition-colors ${locked?'':'bg-amber-50/20'}">
+      <div class="col-span-4"><p class="text-sm font-semibold">${a.subject?.name}</p><p class="text-xs text-slate-400">${a.class?.name}</p></div>
+      <div class="col-span-4 hidden md:block"><div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="${locked?'bg-green-600':'bg-amber-500'} h-full rounded-full" style="width:${locked?100:Math.min(cnt/30*100,90)}%"></div></div></div>
+      <div class="col-span-4 md:col-span-3 flex items-center justify-end gap-2">
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded ${locked?'bg-green-50 text-green-700':'bg-amber-50 text-amber-700'}">${locked?'COMPLETE':'IN PROGRESS'}</span>
+        <span class="text-xs text-slate-400">${cnt} entries</span>
+      </div>
+    </div>`
+  }).join('')
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Students</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Students</h2><p class="text-sm text-slate-500" id="headerSub">Loading…</p></div>
+    <div class="flex items-center gap-3">
+      <button class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm hover:bg-gray-50 transition-colors" onclick="exportCSV()"><span class="material-symbols-outlined" style="font-size:15px">download</span>Export</button>
+      <button onclick="document.getElementById('enrollModal').classList.add('open')" class="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">person_add</span>Enroll Student</button>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-24 md:pb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="studentStats">
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-slate-400 uppercase mb-2">Total Enrolled</p><p class="text-2xl font-bold" id="cntTotal">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-green-400 uppercase mb-2">Active</p><p class="text-2xl font-bold text-green-700" id="cntActive">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-amber-400 uppercase mb-2">Fee Pending</p><p class="text-2xl font-bold text-amber-600" id="cntPending">—</p></div>
+      <div class="bg-white border border-slate-200 p-4 rounded-lg"><p class="text-xs font-semibold text-red-400 uppercase mb-2">With Arrears</p><p class="text-2xl font-bold text-red-600" id="cntArrears">—</p></div>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-48 flex items-center gap-2 border border-slate-200 rounded px-3 py-2 bg-gray-50">
+          <span class="material-symbols-outlined text-slate-400" style="font-size:17px">search</span>
+          <input id="searchInp" type="text" placeholder="Name or student code…" class="flex-1 bg-transparent text-sm focus:outline-none" oninput="searchStudents(this.value)"/>
+        </div>
+        <select id="classFilter" onchange="searchStudents()" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">All Classes</option></select>
+        <select id="statusFilter" onchange="searchStudents()" class="border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">All Statuses</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+      </div>
+      <div class="overflow-x-auto thin-scrollbar">
+        <table class="w-full text-left">
+          <thead><tr class="bg-gray-50 border-b border-slate-200">
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Student</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">ID</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Class</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Enrolled</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Fee</th>
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase text-right">Actions</th>
+          </tr></thead>
+          <tbody id="studentTable" class="divide-y divide-slate-100"><tr><td colspan="6" class="px-5 py-8 text-center text-sm text-slate-400">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="px-5 py-3.5 border-t border-slate-100 bg-gray-50 flex items-center justify-between">
+        <p class="text-sm text-slate-400" id="paginationInfo">—</p>
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="changePage(-1)" class="px-3 py-1.5 border border-slate-200 text-sm rounded hover:bg-gray-100 disabled:opacity-40" disabled>← Prev</button>
+          <button id="nextBtn" onclick="changePage(1)" class="px-3 py-1.5 border border-slate-200 text-sm rounded hover:bg-gray-100 disabled:opacity-40">Next →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-white border-t border-slate-200">
+  <a href="index.html"    class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">dashboard</span><span class="text-[10px]">Home</span></a>
+  <a href="students.html" class="flex flex-col items-center gap-0.5 text-slate-900"><span class="material-symbols-outlined fill-icon" style="font-size:22px">group</span><span class="text-[10px] font-semibold">Students</span></a>
+  <a href="scores.html"   class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">edit_document</span><span class="text-[10px]">Scores</span></a>
+  <a href="fees.html"     class="flex flex-col items-center gap-0.5 text-slate-400"><span class="material-symbols-outlined" style="font-size:22px">payments</span><span class="text-[10px]">Fees</span></a>
+</nav>
+
+<!-- ENROLL MODAL -->
+<div id="enrollModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Enroll Student</h3><button onclick="document.getElementById('enrollModal').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Full Name</label><input id="enrName" type="text" placeholder="e.g. Amara Chioma Eze" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Date of Birth</label><input id="enrDob" type="date" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Gender</label><select id="enrGender" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Class</label><select id="enrClass" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">Loading…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">State of Origin</label><input id="enrState" type="text" placeholder="Lagos" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div class="col-span-2"><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Guardian Name</label><input id="enrGuardian" type="text" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Guardian Phone</label><input id="enrPhone" type="tel" placeholder="080XXXXXXXX" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Guardian Email</label><input id="enrEmail" type="email" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+      </div>
+      <p class="text-xs text-slate-400 bg-gray-50 rounded px-3 py-2">Student ID auto-generated on enrolment.</p>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('enrollModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="enrBtn" onclick="enrollStudent()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Enroll Student</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _profile = null, _page = 0, _limit = 25, _total = 0, _searchTimer = null
+const PAGE = () => _page
+const LIMIT = 25
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  const classes = await SetupAPI.getClasses(_profile.school_id)
+  const cf = document.getElementById('classFilter')
+  classes?.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; cf.appendChild(o) })
+  const cs = document.getElementById('enrClass')
+  cs.innerHTML = '<option value="">Select class</option>' + (classes||[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')
+  await loadStudents()
+})()
+
+function searchStudents(val) {
+  clearTimeout(_searchTimer)
+  _page = 0
+  _searchTimer = setTimeout(loadStudents, 300)
+}
+
+async function loadStudents() {
+  const search = document.getElementById('searchInp').value
+  const classId = document.getElementById('classFilter').value
+  const status = document.getElementById('statusFilter').value
+
+  const opts = { limit: LIMIT, offset: _page * LIMIT }
+  if (search) opts.search = search
+  if (status === 'active') opts.isActive = true
+  else if (status === 'inactive') opts.isActive = false
+
+  document.getElementById('studentTable').innerHTML = '<tr><td colspan="6" class="px-5 py-8 text-center text-sm text-slate-400">Loading…</td></tr>'
+
+  try {
+    let q = getClient().from('students')
+      .select('*, student_class_terms(class:classes(name), term:terms(is_current)), fee_records(status, term:terms(is_current))', { count: 'exact' })
+      .eq('school_id', _profile.school_id)
+      .order('enrolled_at', { ascending: false })
+      .range(_page * LIMIT, (_page + 1) * LIMIT - 1)
+
+    if (search) q = q.or(`full_name.ilike.%${search}%,student_code.ilike.%${search}%`)
+    if (status === 'active') q = q.eq('is_active', true)
+    else if (status === 'inactive') q = q.eq('is_active', false)
+
+    const { data, count } = await q
+    _total = count || 0
+
+    // Stats (full scan — only on first load without filters)
+    if (!search && !status && _page === 0) {
+      const { data: allFees } = await getClient().from('fee_records').select('status, student:students!inner(school_id, is_active)').eq('student.school_id', _profile.school_id).eq('student.is_active', true)
+      document.getElementById('cntTotal').textContent = count || 0
+      const activeQ = await getClient().from('students').select('id', { count: 'exact' }).eq('school_id', _profile.school_id).eq('is_active', true)
+      document.getElementById('cntActive').textContent = activeQ.count || 0
+      document.getElementById('cntPending').textContent = (allFees||[]).filter(f=>f.status==='pending').length
+      document.getElementById('cntArrears').textContent = (allFees||[]).filter(f=>f.status==='arrears').length
+    }
+
+    document.getElementById('headerSub').textContent = `${_total.toLocaleString()} students`
+    document.getElementById('paginationInfo').textContent = `Showing ${_page*LIMIT+1}–${Math.min((_page+1)*LIMIT,_total)} of ${_total}`
+    document.getElementById('prevBtn').disabled = _page === 0
+    document.getElementById('nextBtn').disabled = (_page + 1) * LIMIT >= _total
+
+    const sc = { paid:'bg-green-50 text-green-700', partial:'bg-blue-50 text-blue-700', pending:'bg-amber-50 text-amber-700', arrears:'bg-red-50 text-red-700' }
+    document.getElementById('studentTable').innerHTML = (data||[]).map(s => {
+      const ini = s.full_name.split(' ').map(n=>n[0]).join('').slice(0,2)
+      const ct = s.student_class_terms?.find(t=>t.term?.is_current)
+      const fs = s.fee_records?.find(f=>f.term?.is_current)
+      return `<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="location='student-profile.html?id=${s.id}'">
+        <td class="px-5 py-3.5"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">${ini}</div><div><p class="text-sm font-medium">${s.full_name}</p><p class="text-xs text-slate-400">${s.gender ? s.gender.charAt(0).toUpperCase()+s.gender.slice(1) : '—'}${s.state_of_origin?' · '+s.state_of_origin:''}</p></div></div></td>
+        <td class="px-3 py-3.5 text-xs font-mono font-semibold text-slate-500">${s.student_code}</td>
+        <td class="px-3 py-3.5 text-sm text-slate-600">${ct?.class?.name||'—'}</td>
+        <td class="px-3 py-3.5 text-sm text-slate-400">${new Date(s.enrolled_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'})}</td>
+        <td class="px-3 py-3.5 text-center">${fs?`<span class="text-[10px] font-bold px-2 py-0.5 rounded ${sc[fs.status]||''}">${fs.status.toUpperCase()}</span>`:'<span class="text-[10px] text-slate-300">—</span>'}</td>
+        <td class="px-5 py-3.5 text-right"><div class="flex justify-end gap-1">
+          <button onclick="event.stopPropagation();location='student-profile.html?id=${s.id}'" class="p-1.5 text-slate-400 hover:text-slate-700 rounded hover:bg-gray-100"><span class="material-symbols-outlined" style="font-size:17px">visibility</span></button>
+        </div></td>
+      </tr>`
+    }).join('') || '<tr><td colspan="6" class="px-5 py-8 text-center text-sm text-slate-400">No students found.</td></tr>'
+  } catch(e) { console.error(e); document.getElementById('studentTable').innerHTML = '<tr><td colspan="6" class="px-5 py-8 text-center text-sm text-red-400">Error loading students.</td></tr>' }
+}
+
+function changePage(dir) {
+  _page = Math.max(0, _page + dir)
+  loadStudents()
+}
+
+async function enrollStudent() {
+  const btn = document.getElementById('enrBtn')
+  setLoading(btn, true)
+  try {
+    await StudentsAPI.create(_profile.school_id, {
+      full_name:       document.getElementById('enrName').value.trim(),
+      date_of_birth:   document.getElementById('enrDob').value || null,
+      gender:          document.getElementById('enrGender').value || null,
+      class_id:        document.getElementById('enrClass').value,
+      state_of_origin: document.getElementById('enrState').value.trim() || null,
+      guardian_name:   document.getElementById('enrGuardian').value.trim() || null,
+      guardian_phone:  document.getElementById('enrPhone').value.trim() || null,
+      guardian_email:  document.getElementById('enrEmail').value.trim() || null,
+    })
+    document.getElementById('enrollModal').classList.remove('open')
+    showToast('Student enrolled successfully')
+    _page = 0
+    await loadStudents()
+  } catch(e) { showToast(e.message||'Failed to enroll','error') }
+  setLoading(btn, false)
+}
+
+function exportCSV() {
+  const rows = [['Name','Code','Class','Gender','State','Guardian','Phone','Enrolled']]
+  document.querySelectorAll('#studentTable tr[onclick]').forEach(tr => {
+    const cells = tr.querySelectorAll('td')
+    if (cells.length >= 4) {
+      rows.push([cells[0].querySelector('p')?.textContent||'', cells[1].textContent.trim(), cells[2].textContent.trim(), '', '', '', '', cells[3].textContent.trim()])
+    }
+  })
+  const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n')
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='students.csv'; a.click()
+}
+</script>
+</body>
+</html>

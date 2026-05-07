@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Platform Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>
+body{font-family:'Inter',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}
+.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}
+.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}
+.nav-item{transition:background .15s,color .15s;cursor:pointer;}.nav-item.active{background:#f0fdf4;color:#16a34a;font-weight:600;border-left:2px solid #16a34a;}.nav-item:not(.active){color:#6b7280;}.nav-item:not(.active):hover{background:#f9fafb;color:#111827;}
+.tab{transition:color .15s,border-color .15s;}.tab.active{color:#111;border-bottom:2px solid #111;font-weight:600;}.tab:not(.active){color:#6b7280;border-bottom:2px solid transparent;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}
+.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<!-- ADMIN SIDEBAR -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-gray-200 bg-white z-50">
+  <div class="px-5 py-5 border-b border-gray-100">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 bg-green-700 rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:15px">admin_panel_settings</span></div>
+      <div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-green-600 font-semibold tracking-wider uppercase">Platform Admin</p></div>
+    </div>
+  </div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Overview</p>
+    <div onclick="showSection('overview')" class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm" id="nav-overview"><span class="material-symbols-outlined" style="font-size:19px">monitoring</span><span>Platform Overview</span></div>
+
+    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-5 mb-2">Management</p>
+    <div onclick="showSection('schools')" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm" id="nav-schools"><span class="material-symbols-outlined" style="font-size:19px">apartment</span><span>Schools</span></div>
+    <div onclick="showSection('operators')" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm" id="nav-operators"><span class="material-symbols-outlined" style="font-size:19px">manage_accounts</span><span>Operators</span></div>
+    <div onclick="showSection('demo')" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm" id="nav-demo"><span class="material-symbols-outlined" style="font-size:19px">science</span><span>Demo Data</span></div>
+    <div onclick="showSection('audit')" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm" id="nav-audit"><span class="material-symbols-outlined" style="font-size:19px">receipt_long</span><span>Audit Log</span></div>
+  </nav>
+  <div class="p-4 border-t border-gray-100">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-xs font-bold text-green-700 flex-shrink-0" id="adminInitials">PA</div>
+      <div class="flex-1 min-w-0"><p id="adminName" class="text-sm font-semibold truncate">Platform Admin</p><p class="text-[10px] text-gray-400">Internal Access</p></div>
+      <button onclick="adminSignOut()" class="text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button>
+    </div>
+  </div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div>
+      <h2 class="text-xl font-semibold" id="pageTitle">Platform Overview</h2>
+      <p class="text-sm text-gray-500" id="pageSubtitle">Real-time platform metrics</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded text-xs font-semibold text-green-700">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse"></span>Platform Online
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6">
+
+    <!-- ── OVERVIEW ── -->
+    <div id="section-overview" class="space-y-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="overviewStats">
+        <div class="bg-white border border-gray-200 p-4 rounded-lg"><div class="skeleton h-3 w-20 rounded mb-3"></div><div class="skeleton h-7 w-12 rounded mb-2"></div><div class="skeleton h-3 w-28 rounded"></div></div>
+        <div class="bg-white border border-gray-200 p-4 rounded-lg"><div class="skeleton h-3 w-20 rounded mb-3"></div><div class="skeleton h-7 w-12 rounded mb-2"></div><div class="skeleton h-3 w-28 rounded"></div></div>
+        <div class="bg-white border border-gray-200 p-4 rounded-lg"><div class="skeleton h-3 w-20 rounded mb-3"></div><div class="skeleton h-7 w-12 rounded mb-2"></div><div class="skeleton h-3 w-28 rounded"></div></div>
+        <div class="bg-white border border-gray-200 p-4 rounded-lg"><div class="skeleton h-3 w-20 rounded mb-3"></div><div class="skeleton h-7 w-12 rounded mb-2"></div><div class="skeleton h-3 w-28 rounded"></div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100"><h3 class="text-base font-semibold">Schools by Plan</h3></div>
+          <div class="p-5 space-y-4" id="planBreakdown"><div class="skeleton h-4 w-full rounded"></div><div class="skeleton h-4 w-3/4 rounded mt-2"></div><div class="skeleton h-4 w-1/2 rounded mt-2"></div></div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100"><h3 class="text-base font-semibold">Recent Schools</h3></div>
+          <div id="recentSchoolsList" class="divide-y divide-gray-100 max-h-64 overflow-y-auto thin-scrollbar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHOOLS ── -->
+    <div id="section-schools" class="hidden space-y-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="flex items-center gap-2 border border-gray-200 rounded px-3 py-2 bg-white flex-1 max-w-xs">
+            <span class="material-symbols-outlined text-gray-400" style="font-size:17px">search</span>
+            <input type="text" placeholder="Search schools…" class="flex-1 text-sm focus:outline-none bg-transparent" oninput="filterSchools(this.value)"/>
+          </div>
+          <select id="planFilter" onchange="filterSchools()" class="border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none">
+            <option value="">All Plans</option><option value="trial">Trial</option><option value="lite">Lite</option><option value="full">Full</option>
+          </select>
+          <select id="statusFilter" onchange="filterSchools()" class="border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none">
+            <option value="">All Statuses</option><option value="active">Active</option><option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <button onclick="document.getElementById('addSchoolModal').classList.add('open')" class="flex items-center gap-1.5 px-3 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-gray-800 ml-3">
+          <span class="material-symbols-outlined" style="font-size:15px">add</span>Add School
+        </button>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div class="overflow-x-auto thin-scrollbar">
+          <table class="w-full text-left">
+            <thead><tr class="bg-gray-50 border-b border-gray-200">
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">School</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">State</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Plan</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Status</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Trial Expires</th>
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100" id="schoolsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OPERATORS ── -->
+    <div id="section-operators" class="hidden space-y-5">
+      <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-base font-semibold">All Operators</h3>
+          <button onclick="document.getElementById('addOperatorModal').classList.add('open')" class="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-gray-800">
+            <span class="material-symbols-outlined" style="font-size:15px">person_add</span>Create Operator
+          </button>
+        </div>
+        <div class="overflow-x-auto thin-scrollbar">
+          <table class="w-full text-left">
+            <thead><tr class="bg-gray-50 border-b border-gray-200">
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Operator</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">School</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Last Login</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Status</th>
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100" id="operatorsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DEMO DATA ── -->
+    <div id="section-demo" class="hidden space-y-5">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-5 flex items-start gap-3">
+        <span class="material-symbols-outlined text-amber-600 flex-shrink-0 mt-0.5">warning</span>
+        <div><p class="text-sm font-semibold text-amber-900">Demo data management</p><p class="text-sm text-amber-800 mt-0.5">Use these tools to seed or reset the demo school used for product demonstrations. This data does not affect real schools.</p></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white border border-gray-200 rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-1">Greenwood Academy (Demo)</h3>
+          <p class="text-sm text-gray-500 mb-4">The fictional school used for product demos. Full plan, pre-loaded with students, scores, and fee data.</p>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+              <div><p class="text-sm font-medium">Seed demo data</p><p class="text-xs text-gray-500">Load realistic Nigerian school data</p></div>
+              <button onclick="seedDemo()" class="px-3 py-1.5 bg-green-700 text-white rounded text-xs font-semibold hover:bg-green-800">Seed</button>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+              <div><p class="text-sm font-medium">Reset demo data</p><p class="text-xs text-gray-500">Wipe and re-seed fresh demo data</p></div>
+              <button onclick="resetDemo()" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-semibold hover:bg-amber-700">Reset</button>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-red-50 rounded border border-red-100">
+              <div><p class="text-sm font-medium text-red-700">Clear all demo data</p><p class="text-xs text-red-500">Permanently remove demo school</p></div>
+              <button onclick="clearDemo()" class="px-3 py-1.5 bg-red-600 text-white rounded text-xs font-semibold hover:bg-red-700">Clear</button>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg p-5">
+          <h3 class="text-base font-semibold mb-4">Demo School Stats</h3>
+          <div id="demoStats" class="space-y-3 text-sm">
+            <div class="skeleton h-4 w-full rounded"></div>
+            <div class="skeleton h-4 w-3/4 rounded"></div>
+            <div class="skeleton h-4 w-full rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AUDIT LOG ── -->
+    <div id="section-audit" class="hidden space-y-5">
+      <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-base font-semibold">Audit Log</h3>
+          <span class="text-xs text-gray-400">Last 200 actions</span>
+        </div>
+        <div class="overflow-x-auto thin-scrollbar">
+          <table class="w-full text-left">
+            <thead><tr class="bg-gray-50 border-b border-gray-200">
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Time</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actor</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Action</th>
+              <th class="px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Resource</th>
+              <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Detail</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100" id="auditTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD SCHOOL MODAL -->
+<div id="addSchoolModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><h3 class="text-lg font-semibold">Add School</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">School Name</label><input id="sName" type="text" placeholder="e.g. Greenwood Academy" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">State</label><input id="sState" type="text" placeholder="Lagos" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">LGA</label><input id="sLga" type="text" placeholder="Eti-Osa" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Plan</label><select id="sPlan" class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="trial">Trial (14 days)</option><option value="lite">Lite</option><option value="full">Full</option></select></div>
+        <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Phone</label><input id="sPhone" type="tel" placeholder="0801XXXXXXX" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      </div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Address</label><input id="sAddress" type="text" placeholder="Street, City" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label><input id="sEmail" type="email" placeholder="admin@school.edu.ng" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-gray-100">
+      <button onclick="document.getElementById('addSchoolModal').classList.remove('open')" class="flex-1 border border-gray-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="addSchoolBtn" onclick="addSchool()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-gray-800">Add School</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD OPERATOR MODAL -->
+<div id="addOperatorModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><h3 class="text-lg font-semibold">Create Operator</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">School</label><select id="opSchool" class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="">Select school…</option></select></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Full Name</label><input id="opName" type="text" placeholder="e.g. Adaeze Okonkwo" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label><input id="opEmail" type="email" placeholder="operator@school.edu.ng" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Temporary Password</label><input id="opPass" type="text" placeholder="Min 8 characters" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+      <div class="p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
+        <strong>Note:</strong> Creating operators requires the Supabase service role key configured server-side. This form demonstrates the flow — wire it to your backend or a Supabase Edge Function that calls <code>auth.admin.createUser()</code>.
+      </div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-gray-100">
+      <button onclick="document.getElementById('addOperatorModal').classList.remove('open')" class="flex-1 border border-gray-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button onclick="showToast('Operator creation requires server-side service role key — see README','info');document.getElementById('addOperatorModal').classList.remove('open')" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-gray-800">Create Operator</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT SCHOOL MODAL -->
+<div id="editSchoolModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><h3 class="text-lg font-semibold">Edit School</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-gray-400 hover:text-gray-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <input type="hidden" id="editSchoolId"/>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Plan</label><select id="editPlan" class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="trial">Trial</option><option value="lite">Lite</option><option value="full">Full</option></select></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Status</label><select id="editStatus" class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="active">Active</option><option value="suspended">Suspended</option><option value="offboarded">Offboarded</option></select></div>
+      <div><label class="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Trial Expires</label><input id="editTrialExpiry" type="date" class="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-gray-700 focus:outline-none"/></div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-gray-100">
+      <button onclick="document.getElementById('editSchoolModal').classList.remove('open')" class="flex-1 border border-gray-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="editSchoolSaveBtn" onclick="saveSchoolEdit()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-gray-800">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _adminSession = null
+let _allSchools = []
+let _allOperators = []
+
+;(async () => {
+  // Check auth — admin login uses same Supabase auth
+  const sb = getClient()
+  const { data: { session } } = await sb.auth.getSession()
+  if (!session) { window.location.href = 'admin-login.html'; return }
+
+  // Verify they're actually a platform admin
+  const { data: adminRecord } = await sb.from('platform_admins').select('*').eq('id', session.user.id).maybeSingle()
+  if (!adminRecord) { alert('Access denied. This area is for platform administrators only.'); window.location.href = 'login.html'; return }
+
+  _adminSession = session
+  const ini = adminRecord.full_name.split(' ').map(n=>n[0]).join('').slice(0,2)
+  document.getElementById('adminInitials').textContent = ini
+  document.getElementById('adminName').textContent = adminRecord.full_name
+
+  await loadAll()
+})()
+
+async function loadAll() {
+  await Promise.all([loadOverviewStats(), loadSchools(), loadOperators(), loadAuditLog()])
+}
+
+// ── Overview ──────────────────────────────────────────────────
+async function loadOverviewStats() {
+  try {
+    const { data: stats } = await getClient().rpc('get_platform_stats')
+    if (!stats) return
+    document.getElementById('overviewStats').innerHTML = `
+      <div class="bg-white border border-gray-200 p-4 rounded-lg"><p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Total Schools</p><p class="text-2xl font-bold">${stats.total_schools}</p><p class="text-xs text-gray-400 mt-1">${stats.active_schools} active</p></div>
+      <div class="bg-white border border-gray-200 p-4 rounded-lg"><p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Trial Schools</p><p class="text-2xl font-bold text-amber-600">${stats.trial_schools}</p><p class="text-xs text-gray-400 mt-1">Pending conversion</p></div>
+      <div class="bg-white border border-gray-200 p-4 rounded-lg"><p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Total Students</p><p class="text-2xl font-bold">${stats.total_students_platform?.toLocaleString()}</p><p class="text-xs text-gray-400 mt-1">Across all schools</p></div>
+      <div class="bg-white border border-gray-200 p-4 rounded-lg"><p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Suspended</p><p class="text-2xl font-bold text-red-500">${stats.suspended_schools}</p><p class="text-xs text-gray-400 mt-1">Require attention</p></div>`
+
+    const plans = stats.schools_by_plan || {}
+    const total = Object.values(plans).reduce((a,b)=>a+b,0)||1
+    const planColors = {trial:'bg-amber-400',lite:'bg-blue-500',full:'bg-green-600'}
+    document.getElementById('planBreakdown').innerHTML = Object.entries(plans).map(([plan,count]) => {
+      const pct = Math.round(count/total*100)
+      return `<div>
+        <div class="flex justify-between text-sm mb-1.5"><span class="font-medium capitalize">${plan}</span><span class="text-gray-500">${count} schools (${pct}%)</span></div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden"><div class="${planColors[plan]||'bg-gray-400'} h-full rounded-full" style="width:${pct}%"></div></div>
+      </div>`
+    }).join('')
+  } catch(e) { console.error('Stats error:', e) }
+}
+
+// ── Schools ───────────────────────────────────────────────────
+async function loadSchools() {
+  const { data } = await getClient().from('schools').select('*').order('created_at', {ascending:false})
+  _allSchools = data || []
+  renderSchools(_allSchools)
+  // Populate school selector in operator modal
+  const sel = document.getElementById('opSchool')
+  sel.innerHTML = '<option value="">Select school…</option>' + _allSchools.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')
+  // Recent schools on overview
+  document.getElementById('recentSchoolsList').innerHTML = _allSchools.slice(0,5).map(s => {
+    const pc = {trial:'bg-amber-50 text-amber-700',lite:'bg-blue-50 text-blue-700',full:'bg-green-50 text-green-700'}
+    const sc = {active:'text-green-600',suspended:'text-red-500',offboarded:'text-gray-400'}
+    return `<div class="flex items-center justify-between px-5 py-3 hover:bg-gray-50">
+      <div><p class="text-sm font-medium">${s.name}</p><p class="text-xs text-gray-400">${s.state||'—'}</p></div>
+      <span class="text-[10px] font-bold px-2 py-0.5 rounded ${pc[s.plan]||''}">${s.plan.toUpperCase()}</span>
+    </div>`
+  }).join('')
+}
+
+function renderSchools(schools) {
+  const pc = {trial:'bg-amber-50 text-amber-700',lite:'bg-blue-50 text-blue-700',full:'bg-green-50 text-green-700'}
+  const sc = {active:'bg-green-50 text-green-700',suspended:'bg-red-50 text-red-600',offboarded:'bg-gray-100 text-gray-500'}
+  document.getElementById('schoolsTable').innerHTML = schools.map(s => `
+    <tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3.5"><p class="text-sm font-medium">${s.name}</p><p class="text-xs text-gray-400">${s.email||s.phone||'—'}</p></td>
+      <td class="px-3 py-3.5 text-sm text-gray-500">${s.state||'—'}</td>
+      <td class="px-3 py-3.5 text-center"><span class="text-[10px] font-bold px-2 py-0.5 rounded ${pc[s.plan]||''}">${s.plan.toUpperCase()}</span></td>
+      <td class="px-3 py-3.5 text-center"><span class="text-[10px] font-bold px-2 py-0.5 rounded ${sc[s.status]||''}">${s.status.toUpperCase()}</span></td>
+      <td class="px-3 py-3.5 text-sm text-gray-400">${s.trial_expires_at||'—'}</td>
+      <td class="px-5 py-3.5 text-right"><div class="flex justify-end gap-1">
+        <button onclick="openEditSchool('${s.id}','${s.plan}','${s.status}','${s.trial_expires_at||''}')" class="p-1.5 text-gray-400 hover:text-gray-700 rounded hover:bg-gray-100"><span class="material-symbols-outlined" style="font-size:16px">edit</span></button>
+        ${s.status==='active'?`<button onclick="toggleSchoolStatus('${s.id}','suspended')" class="p-1.5 text-red-400 hover:text-red-600 rounded hover:bg-red-50"><span class="material-symbols-outlined" style="font-size:16px">block</span></button>`:`<button onclick="toggleSchoolStatus('${s.id}','active')" class="p-1.5 text-green-500 hover:text-green-700 rounded hover:bg-green-50"><span class="material-symbols-outlined" style="font-size:16px">check_circle</span></button>`}
+      </div></td>
+    </tr>`).join('') || '<tr><td colspan="6" class="px-5 py-8 text-center text-sm text-gray-400">No schools found.</td></tr>'
+}
+
+function filterSchools(search) {
+  const q = typeof search === 'string' ? search.toLowerCase() : ''
+  const plan = document.getElementById('planFilter')?.value
+  const status = document.getElementById('statusFilter')?.value
+  let filtered = _allSchools.filter(s => {
+    if (q && !s.name.toLowerCase().includes(q) && !(s.state||'').toLowerCase().includes(q)) return false
+    if (plan && s.plan !== plan) return false
+    if (status && s.status !== status) return false
+    return true
+  })
+  renderSchools(filtered)
+}
+
+function openEditSchool(id, plan, status, expiry) {
+  document.getElementById('editSchoolId').value = id
+  document.getElementById('editPlan').value = plan
+  document.getElementById('editStatus').value = status
+  document.getElementById('editTrialExpiry').value = expiry
+  document.getElementById('editSchoolModal').classList.add('open')
+}
+
+async function saveSchoolEdit() {
+  const btn = document.getElementById('editSchoolSaveBtn')
+  setLoading(btn, true)
+  const id = document.getElementById('editSchoolId').value
+  const payload = {
+    plan: document.getElementById('editPlan').value,
+    status: document.getElementById('editStatus').value,
+    trial_expires_at: document.getElementById('editTrialExpiry').value || null,
+    updated_at: new Date().toISOString()
+  }
+  const { error } = await getClient().from('schools').update(payload).eq('id', id)
+  if (error) { showToast('Failed to update school', 'error') }
+  else { showToast('School updated'); document.getElementById('editSchoolModal').classList.remove('open'); await loadSchools(); await loadOverviewStats() }
+  setLoading(btn, false)
+}
+
+async function toggleSchoolStatus(id, newStatus) {
+  if (!confirm(`${newStatus==='suspended'?'Suspend':'Reactivate'} this school?`)) return
+  const { error } = await getClient().from('schools').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) showToast('Update failed', 'error')
+  else { showToast(`School ${newStatus}`); await loadSchools() }
+}
+
+async function addSchool() {
+  const btn = document.getElementById('addSchoolBtn')
+  setLoading(btn, true)
+  const { error } = await getClient().from('schools').insert({
+    name: document.getElementById('sName').value.trim(),
+    state: document.getElementById('sState').value.trim()||null,
+    lga: document.getElementById('sLga').value.trim()||null,
+    plan: document.getElementById('sPlan').value,
+    phone: document.getElementById('sPhone').value.trim()||null,
+    address: document.getElementById('sAddress').value.trim()||null,
+    email: document.getElementById('sEmail').value.trim()||null,
+    trial_expires_at: document.getElementById('sPlan').value==='trial' ? new Date(Date.now()+14*864e5).toISOString().split('T')[0] : null
+  })
+  if (error) showToast('Failed to add school: '+error.message, 'error')
+  else { showToast('School added'); document.getElementById('addSchoolModal').classList.remove('open'); await loadSchools(); await loadOverviewStats() }
+  setLoading(btn, false)
+}
+
+// ── Operators ─────────────────────────────────────────────────
+async function loadOperators() {
+  const { data } = await getClient().from('operators').select('*, school:schools(name)').order('created_at', {ascending:false})
+  _allOperators = data || []
+  document.getElementById('operatorsTable').innerHTML = _allOperators.map(op => `
+    <tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3.5"><p class="text-sm font-medium">${op.full_name}</p><p class="text-xs text-gray-400">${op.id.slice(0,8)}…</p></td>
+      <td class="px-3 py-3.5 text-sm text-gray-500">${op.school?.name||'—'}</td>
+      <td class="px-3 py-3.5 text-sm text-gray-400">${op.last_login?new Date(op.last_login).toLocaleDateString('en-GB'):'Never'}</td>
+      <td class="px-3 py-3.5 text-center"><span class="text-[10px] font-bold px-2 py-0.5 rounded ${op.is_active?'bg-green-50 text-green-700':'bg-red-50 text-red-600'}">${op.is_active?'ACTIVE':'INACTIVE'}</span></td>
+      <td class="px-5 py-3.5 text-right">
+        ${op.is_active?`<button onclick="deactivateOperator('${op.id}')" class="px-2.5 py-1 text-xs font-medium border border-red-200 text-red-600 rounded hover:bg-red-50">Deactivate</button>`:
+        `<button onclick="reactivateOperator('${op.id}')" class="px-2.5 py-1 text-xs font-medium border border-green-200 text-green-600 rounded hover:bg-green-50">Reactivate</button>`}
+      </td>
+    </tr>`).join('') || '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No operators found.</td></tr>'
+}
+
+async function deactivateOperator(id) {
+  if (!confirm('Deactivate this operator?')) return
+  const { error } = await getClient().from('operators').update({ is_active: false }).eq('id', id)
+  if (error) showToast('Failed', 'error'); else { showToast('Operator deactivated'); await loadOperators() }
+}
+
+async function reactivateOperator(id) {
+  const { error } = await getClient().from('operators').update({ is_active: true }).eq('id', id)
+  if (error) showToast('Failed', 'error'); else { showToast('Operator reactivated'); await loadOperators() }
+}
+
+// ── Demo data ─────────────────────────────────────────────────
+async function seedDemo() {
+  showToast('Run 04_demo_seed.sql in Supabase SQL Editor to seed demo data', 'info')
+}
+async function resetDemo() {
+  showToast('Delete the demo school first, then re-run 04_demo_seed.sql', 'info')
+}
+async function clearDemo() {
+  if (!confirm('Delete all demo data? This cannot be undone.')) return
+  const { data } = await getClient().from('schools').select('id').eq('name', 'Greenwood Academy').maybeSingle()
+  if (!data) { showToast('Demo school not found', 'error'); return }
+  const { error } = await getClient().from('schools').delete().eq('id', data.id)
+  if (error) showToast('Failed to delete demo school', 'error')
+  else { showToast('Demo data cleared'); await loadSchools() }
+}
+
+// ── Audit log ─────────────────────────────────────────────────
+async function loadAuditLog() {
+  const { data } = await getClient().from('audit_logs').select('*').order('created_at', {ascending:false}).limit(200)
+  const logs = data || []
+  document.getElementById('auditTable').innerHTML = logs.length ? logs.map(l => `
+    <tr class="hover:bg-gray-50">
+      <td class="px-5 py-3 text-xs text-gray-400 whitespace-nowrap">${new Date(l.created_at).toLocaleString('en-GB')}</td>
+      <td class="px-3 py-3 text-xs text-gray-600">${l.actor_id.slice(0,8)}… <span class="text-gray-400">(${l.actor_role})</span></td>
+      <td class="px-3 py-3 text-xs font-medium">${l.action}</td>
+      <td class="px-3 py-3 text-xs text-gray-500">${l.resource}${l.resource_id?' #'+l.resource_id.toString().slice(0,6):''}…</td>
+      <td class="px-5 py-3 text-xs text-gray-400">${l.detail?JSON.stringify(l.detail).slice(0,60)+'…':'—'}</td>
+    </tr>`).join('') : '<tr><td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No audit logs yet.</td></tr>'
+}
+
+// ── Navigation ────────────────────────────────────────────────
+const sectionMeta = {
+  overview: ['Platform Overview','Real-time platform metrics'],
+  schools:  ['Schools','Manage all school accounts'],
+  operators:['Operators','Manage school operator accounts'],
+  demo:     ['Demo Data','Seed and manage demo school data'],
+  audit:    ['Audit Log','Platform-wide action history'],
+}
+function showSection(name) {
+  document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'))
+  document.querySelectorAll('[id^="nav-"]').forEach(el => el.classList.remove('active'))
+  document.getElementById('section-'+name).classList.remove('hidden')
+  document.getElementById('nav-'+name).classList.add('active')
+  const [title, sub] = sectionMeta[name]||['','']
+  document.getElementById('pageTitle').textContent = title
+  document.getElementById('pageSubtitle').textContent = sub
+}
+
+async function adminSignOut() {
+  await getClient().auth.signOut()
+  window.location.href = 'admin-login.html'
+}
+</script>
+</body>
+</html>

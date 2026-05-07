@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Term Settings</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}.modal-overlay.open{display:flex;}</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <h2 class="text-xl font-semibold">Term Settings</h2>
+    <p class="text-sm text-slate-500">Manage sessions, terms, exam periods and promotion rules</p>
+  </header>
+
+  <main class="flex-1 p-6 space-y-6 max-w-4xl mx-auto pb-8">
+
+    <!-- Current Status Banner -->
+    <div id="currentStatus" class="bg-slate-900 text-white rounded-lg p-5 flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <p class="text-xs font-bold tracking-widest text-white/50 uppercase">Current Active Term</p>
+        <h3 class="text-lg font-semibold mt-0.5" id="currentTermLabel">Loading…</h3>
+        <p class="text-sm text-white/60 mt-0.5" id="currentSessionLabel">—</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="examToggleArea"></div>
+      </div>
+    </div>
+
+    <!-- Sessions & Terms -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-semibold">Academic Sessions & Terms</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Only one session and one term can be "current" at a time</p>
+        </div>
+        <button onclick="document.getElementById('addSessionModal').classList.add('open')" class="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:15px">add</span>New Session
+        </button>
+      </div>
+      <div id="sessionList" class="divide-y divide-slate-100 p-2 space-y-1">
+        <div class="px-4 py-6 text-center text-sm text-slate-400">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Classes -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-semibold">Classes</h3>
+          <p class="text-xs text-slate-500 mt-0.5">The class structure for this school</p>
+        </div>
+        <button onclick="document.getElementById('addClassModal').classList.add('open')" class="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:15px">add</span>Add Class
+        </button>
+      </div>
+      <div id="classList" class="p-4 flex flex-wrap gap-2">
+        <div class="text-sm text-slate-400">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Promotion Rules -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100">
+        <h3 class="text-base font-semibold">Promotion Rules</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Define which class each class promotes to at end of session. Used to auto-recommend decisions in the Promotion workflow.</p>
+      </div>
+      <div class="p-5 space-y-3" id="promoRulesList">
+        <div class="text-sm text-slate-400">Loading…</div>
+      </div>
+      <div class="px-5 pb-5">
+        <button onclick="addPromoRule()" class="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:15px">add</span>Add Promotion Rule
+        </button>
+      </div>
+    </div>
+
+    <!-- Subjects per class -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-semibold">Subject Assignments</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Which subjects are taught in each class</p>
+        </div>
+      </div>
+      <div class="p-5 space-y-4" id="subjectAssignList">
+        <div class="text-sm text-slate-400">Loading…</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD SESSION MODAL -->
+<div id="addSessionModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">New Academic Session</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Session Name</label><input id="sessName" type="text" placeholder="e.g. 2025/2026" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+      <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="sessCurrent" class="w-4 h-4"/><span class="text-sm">Set as current session</span></label>
+      <p class="text-xs text-slate-400 bg-gray-50 rounded px-3 py-2">After creating a session, add its three terms below.</p>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('addSessionModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="addSessBtn" onclick="addSession()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Create Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TERM MODAL -->
+<div id="addTermModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Add Term</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <input type="hidden" id="termSessId"/>
+      <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Term</label><select id="termName" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="First Term">First Term</option><option value="Second Term">Second Term</option><option value="Third Term">Third Term</option></select></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Start Date</label><input id="termStart" type="date" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">End Date</label><input id="termEnd" type="date" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="termCurrent" class="w-4 h-4"/><span class="text-sm">Set as current term</span></label>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('addTermModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="addTermBtn" onclick="addTerm()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Add Term</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CLASS MODAL -->
+<div id="addClassModal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Add Class</h3><button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="p-5 space-y-4">
+      <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Class Name</label><input id="className" type="text" placeholder="e.g. JSS 2A" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:border-slate-700 focus:outline-none"/></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Level</label><select id="classLevel" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none"><option value="JSS">JSS</option><option value="SSS">SSS</option><option value="Primary">Primary</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase block mb-1.5">Sort Order</label><input id="classOrder" type="number" value="0" class="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:outline-none"/></div>
+      </div>
+    </div>
+    <div class="flex gap-3 px-5 py-4 border-t border-slate-100">
+      <button onclick="document.getElementById('addClassModal').classList.remove('open')" class="flex-1 border border-slate-200 text-sm font-medium py-2 rounded hover:bg-gray-50">Cancel</button>
+      <button id="addClassBtn" onclick="addClass()" class="flex-1 bg-black text-white text-sm font-semibold py-2 rounded hover:bg-slate-800">Add Class</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _profile = null, _classes = [], _subjects = [], _sessions = []
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  await Promise.all([loadSessions(), loadClasses(), loadSubjects()])
+  await loadPromoRules()
+  await loadSubjectAssignments()
+})()
+
+async function loadSessions() {
+  const { data } = await getClient()
+    .from('academic_sessions')
+    .select('*, terms(*)')
+    .eq('school_id', _profile.school_id)
+    .order('name', { ascending: false })
+
+  _sessions = data || []
+
+  // Update current status banner
+  const currentSess = _sessions.find(s => s.is_current)
+  const currentTerm = currentSess?.terms?.find(t => t.is_current)
+  if (currentTerm) {
+    document.getElementById('currentTermLabel').textContent = currentTerm.name
+    document.getElementById('currentSessionLabel').textContent = currentSess.name + (currentTerm.start_date ? ` · ${new Date(currentTerm.start_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})} – ${new Date(currentTerm.end_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}` : '')
+    document.getElementById('examToggleArea').innerHTML = `
+      <div class="text-right mr-4 hidden sm:block">
+        <p class="text-[10px] text-white/50 uppercase font-bold">Exam Period</p>
+        <p class="text-white font-bold">${currentTerm.is_exam_open ? 'OPEN' : 'CLOSED'}</p>
+      </div>
+      <button onclick="toggleExam('${currentTerm.id}', ${currentTerm.is_exam_open})"
+        class="px-4 py-2 rounded text-sm font-semibold transition-colors ${currentTerm.is_exam_open ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-white text-black hover:bg-white/90'}">
+        ${currentTerm.is_exam_open ? 'Close Exam Period' : 'Open Exam Period'}
+      </button>`
+  } else {
+    document.getElementById('currentTermLabel').textContent = 'No current term set'
+    document.getElementById('currentSessionLabel').textContent = 'Set a term as current below'
+    document.getElementById('examToggleArea').innerHTML = ''
+  }
+
+  // Render session list
+  document.getElementById('sessionList').innerHTML = _sessions.length
+    ? _sessions.map(sess => {
+        const terms = (sess.terms || []).sort((a,b) => a.name.localeCompare(b.name))
+        return `<div class="bg-gray-50 border border-slate-200 rounded-lg p-4 mb-2">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <h4 class="text-sm font-bold">${sess.name}</h4>
+              ${sess.is_current ? '<span class="text-[10px] font-bold px-2 py-0.5 bg-black text-white rounded">CURRENT</span>' : ''}
+            </div>
+            <div class="flex gap-2">
+              ${!sess.is_current ? `<button onclick="setCurrentSession('${sess.id}')" class="text-xs px-2.5 py-1 border border-slate-200 rounded font-medium hover:bg-gray-100">Set Current</button>` : ''}
+              <button onclick="openAddTerm('${sess.id}')" class="text-xs px-2.5 py-1 bg-black text-white rounded font-medium hover:bg-slate-800">+ Add Term</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            ${terms.map(t => `
+              <div class="bg-white border ${t.is_current ? 'border-black' : 'border-slate-200'} rounded-lg p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-semibold">${t.name}</span>
+                  ${t.is_current ? '<span class="text-[10px] font-bold px-1.5 py-0.5 bg-black text-white rounded">NOW</span>' : ''}
+                </div>
+                ${t.start_date ? `<p class="text-xs text-slate-400">${new Date(t.start_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})} – ${new Date(t.end_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</p>` : '<p class="text-xs text-slate-300">No dates set</p>'}
+                <div class="flex items-center gap-2 mt-2 flex-wrap">
+                  ${t.is_exam_open ? '<span class="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 text-green-700 rounded">Exam Open</span>' : '<span class="text-[10px] text-slate-400 px-1.5 py-0.5">Exam Closed</span>'}
+                  <button onclick="toggleExam('${t.id}',${t.is_exam_open})" class="text-[10px] px-2 py-0.5 border border-slate-200 rounded hover:bg-gray-50">${t.is_exam_open ? 'Close' : 'Open'} Exam</button>
+                  ${!t.is_current ? `<button onclick="setCurrentTerm('${t.id}')" class="text-[10px] px-2 py-0.5 border border-slate-200 rounded hover:bg-gray-50">Set Current</button>` : ''}
+                </div>
+              </div>`).join('')}
+            ${terms.length === 0 ? '<div class="col-span-3 text-sm text-slate-400 py-2">No terms added yet.</div>' : ''}
+          </div>
+        </div>`
+      }).join('')
+    : '<div class="px-4 py-6 text-center text-sm text-slate-400">No sessions yet. Create your first session above.</div>'
+}
+
+async function setCurrentSession(id) {
+  const { error } = await getClient().from('academic_sessions').update({ is_current: false }).eq('school_id', _profile.school_id)
+  if (error) { showToast('Failed', 'error'); return }
+  await getClient().from('academic_sessions').update({ is_current: true }).eq('id', id)
+  showToast('Current session updated')
+  await loadSessions()
+}
+
+async function setCurrentTerm(id) {
+  // Unset all terms for this school
+  const sessIds = _sessions.map(s => s.id)
+  await getClient().from('terms').update({ is_current: false }).in('session_id', sessIds)
+  await getClient().from('terms').update({ is_current: true }).eq('id', id)
+  showToast('Current term updated')
+  await loadSessions()
+}
+
+async function toggleExam(termId, isOpen) {
+  const { error } = await getClient().from('terms').update({ is_exam_open: !isOpen }).eq('id', termId)
+  if (error) { showToast('Failed', 'error'); return }
+  showToast(`Exam period ${isOpen ? 'closed' : 'opened'}`)
+  await loadSessions()
+}
+
+async function addSession() {
+  const name = document.getElementById('sessName').value.trim()
+  if (!name) { showToast('Enter a session name', 'error'); return }
+  const btn = document.getElementById('addSessBtn')
+  setLoading(btn, true)
+  const isCurrent = document.getElementById('sessCurrent').checked
+  if (isCurrent) await getClient().from('academic_sessions').update({ is_current: false }).eq('school_id', _profile.school_id)
+  const { error } = await getClient().from('academic_sessions').insert({ school_id: _profile.school_id, name, is_current: isCurrent })
+  if (error) { showToast(error.message, 'error'); setLoading(btn, false); return }
+  document.getElementById('addSessionModal').classList.remove('open')
+  document.getElementById('sessName').value = ''
+  showToast(`Session ${name} created`)
+  await loadSessions()
+  setLoading(btn, false)
+}
+
+function openAddTerm(sessId) {
+  document.getElementById('termSessId').value = sessId
+  document.getElementById('termName').value = 'First Term'
+  document.getElementById('termStart').value = ''
+  document.getElementById('termEnd').value = ''
+  document.getElementById('termCurrent').checked = false
+  document.getElementById('addTermModal').classList.add('open')
+}
+
+async function addTerm() {
+  const sessId = document.getElementById('termSessId').value
+  const name = document.getElementById('termName').value
+  const isCurrent = document.getElementById('termCurrent').checked
+  const btn = document.getElementById('addTermBtn')
+  setLoading(btn, true)
+  if (isCurrent) {
+    const sessIds = _sessions.map(s => s.id)
+    await getClient().from('terms').update({ is_current: false }).in('session_id', sessIds)
+  }
+  const { error } = await getClient().from('terms').insert({
+    session_id: sessId, name,
+    start_date: document.getElementById('termStart').value || null,
+    end_date: document.getElementById('termEnd').value || null,
+    is_current: isCurrent, is_exam_open: false,
+  })
+  if (error) { showToast(error.message, 'error'); setLoading(btn, false); return }
+  document.getElementById('addTermModal').classList.remove('open')
+  showToast(`${name} added`)
+  await loadSessions()
+  setLoading(btn, false)
+}
+
+async function loadClasses() {
+  _classes = await SetupAPI.getClasses(_profile.school_id)
+  document.getElementById('classList').innerHTML = (_classes||[]).map(c => `
+    <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-slate-200 rounded-lg text-sm">
+      <span class="font-medium">${c.name}</span>
+      <span class="text-xs text-slate-400">${c.level||''}</span>
+    </div>`).join('') || '<div class="text-sm text-slate-400">No classes set up yet.</div>'
+}
+
+async function addClass() {
+  const name = document.getElementById('className').value.trim()
+  if (!name) { showToast('Enter a class name', 'error'); return }
+  const btn = document.getElementById('addClassBtn')
+  setLoading(btn, true)
+  const { error } = await getClient().from('classes').insert({
+    school_id: _profile.school_id, name,
+    level: document.getElementById('classLevel').value,
+    sort_order: parseInt(document.getElementById('classOrder').value) || 0,
+  })
+  if (error) { showToast(error.message, 'error'); setLoading(btn, false); return }
+  document.getElementById('addClassModal').classList.remove('open')
+  document.getElementById('className').value = ''
+  showToast(`Class ${name} added`)
+  await loadClasses()
+  setLoading(btn, false)
+}
+
+async function loadSubjects() {
+  _subjects = await SetupAPI.getSubjects(_profile.school_id)
+  if (!_subjects?.length) {
+    // seed default Nigerian subjects
+    const defaults = [
+      { name:'Mathematics', code:'MTH' }, { name:'English Language', code:'ENG' },
+      { name:'Basic Science', code:'BSC' }, { name:'Social Studies', code:'SOC' },
+      { name:'Civic Education', code:'CIV' }, { name:'Agricultural Science', code:'AGR' },
+      { name:'Christian R. Studies', code:'CRS' }, { name:'Physical Education', code:'PE' },
+      { name:'Further Mathematics', code:'FMT' }, { name:'Economics', code:'ECO' },
+      { name:'Biology', code:'BIO' }, { name:'Chemistry', code:'CHE' },
+      { name:'Physics', code:'PHY' }, { name:'Literature in English', code:'LIT' },
+    ]
+    const { error } = await getClient().from('subjects').insert(defaults.map(s => ({ ...s, school_id: _profile.school_id })))
+    if (!error) {
+      _subjects = await SetupAPI.getSubjects(_profile.school_id)
+      showToast('Default Nigerian subjects added')
+    }
+  }
+}
+
+async function loadPromoRules() {
+  const rules = await PromotionAPI.getPromotionRules(_profile.school_id)
+  const el = document.getElementById('promoRulesList')
+  if (!_classes.length) { el.innerHTML = '<p class="text-sm text-slate-400">Add classes first to configure promotion rules.</p>'; return }
+
+  el.innerHTML = `
+    <div class="grid grid-cols-12 gap-2 mb-2 px-2">
+      <span class="col-span-4 text-xs font-semibold text-slate-400 uppercase">From Class</span>
+      <span class="col-span-1 text-center text-xs text-slate-300">→</span>
+      <span class="col-span-4 text-xs font-semibold text-slate-400 uppercase">Promotes To</span>
+      <span class="col-span-2 text-xs font-semibold text-slate-400 uppercase">Min Avg</span>
+      <span class="col-span-1"></span>
+    </div>
+    ${rules.map(r => `
+      <div class="grid grid-cols-12 gap-2 items-center bg-gray-50 rounded-lg px-3 py-2 border border-slate-200">
+        <span class="col-span-4 text-sm font-medium">${r.from_class?.name}</span>
+        <span class="col-span-1 text-center text-slate-400">→</span>
+        <span class="col-span-4 text-sm">${r.to_class?.name}</span>
+        <span class="col-span-2 text-sm text-slate-500">${r.min_average}%</span>
+        <div class="col-span-1 flex justify-end">
+          <button onclick="deletePromoRule('${r.id}')" class="p-1 text-slate-300 hover:text-red-500 rounded">
+            <span class="material-symbols-outlined" style="font-size:16px">close</span>
+          </button>
+        </div>
+      </div>`).join('')}
+    ${rules.length === 0 ? '<p class="text-sm text-slate-400 px-2">No promotion rules configured. Add rules to enable auto-recommendations in the Promotion workflow.</p>' : ''}`
+}
+
+function addPromoRule() {
+  if (!_classes.length) { showToast('Add classes first', 'error'); return }
+  const classOpts = _classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
+  const div = document.createElement('div')
+  div.className = 'grid grid-cols-12 gap-2 items-center bg-blue-50 rounded-lg px-3 py-2 border border-blue-200'
+  div.innerHTML = `
+    <select class="col-span-4 border border-slate-200 rounded px-2 py-1.5 text-sm bg-white focus:outline-none" id="newRuleFrom">${classOpts}</select>
+    <span class="col-span-1 text-center text-slate-400">→</span>
+    <select class="col-span-4 border border-slate-200 rounded px-2 py-1.5 text-sm bg-white focus:outline-none" id="newRuleTo">${classOpts}</select>
+    <input type="number" value="40" min="0" max="100" class="col-span-2 border border-slate-200 rounded px-2 py-1.5 text-sm focus:outline-none" id="newRuleMin" placeholder="40"/>
+    <div class="col-span-1 flex gap-1">
+      <button onclick="savePromoRule(this)" class="p-1 text-green-600 hover:text-green-800 rounded"><span class="material-symbols-outlined" style="font-size:18px">check</span></button>
+      <button onclick="this.closest('div.grid').remove()" class="p-1 text-slate-400 hover:text-red-500 rounded"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+    </div>`
+  document.getElementById('promoRulesList').appendChild(div)
+}
+
+async function savePromoRule(btn) {
+  const row = btn.closest('div.grid')
+  const fromId = row.querySelector('#newRuleFrom').value
+  const toId = row.querySelector('#newRuleTo').value
+  const minAvg = parseFloat(row.querySelector('#newRuleMin').value) || 40
+  if (fromId === toId) { showToast('From and To class must be different', 'error'); return }
+  try {
+    await PromotionAPI.upsertRule(_profile.school_id, fromId, toId, minAvg)
+    showToast('Promotion rule saved')
+    await loadPromoRules()
+  } catch(e) { showToast(e.message, 'error') }
+}
+
+async function deletePromoRule(id) {
+  await getClient().from('promotion_rules').delete().eq('id', id)
+  showToast('Rule deleted')
+  await loadPromoRules()
+}
+
+async function loadSubjectAssignments() {
+  if (!_classes.length || !_subjects.length) return
+  // Show first 4 classes as examples; operator can extend
+  const sample = _classes.slice(0, 6)
+  const assignEl = document.getElementById('subjectAssignList')
+  assignEl.innerHTML = sample.map(cls => `
+    <div class="border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 flex items-center justify-between border-b border-slate-200">
+        <span class="text-sm font-semibold">${cls.name}</span>
+        <button onclick="addSubjectToClass('${cls.id}')" class="text-xs px-2.5 py-1 border border-slate-200 bg-white rounded font-medium hover:bg-gray-100">+ Add Subject</button>
+      </div>
+      <div id="cls-subjects-${cls.id}" class="p-3 flex flex-wrap gap-2">
+        <span class="text-xs text-slate-400">Loading…</span>
+      </div>
+    </div>`).join('')
+
+  // Load subjects for each class
+  for (const cls of sample) {
+    const { data } = await getClient().from('class_subjects').select('*, subject:subjects(name,code)').eq('class_id', cls.id)
+    const el = document.getElementById(`cls-subjects-${cls.id}`)
+    if (!data?.length) { el.innerHTML = '<span class="text-xs text-slate-400">No subjects assigned</span>'; continue }
+    el.innerHTML = data.map(cs => `
+      <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded px-2 py-1 text-xs">
+        <span class="font-medium">${cs.subject?.name}</span>
+        <button onclick="removeSubjectFromClass('${cs.id}','${cls.id}')" class="text-slate-300 hover:text-red-500 ml-1">×</button>
+      </div>`).join('')
+  }
+}
+
+async function addSubjectToClass(classId) {
+  const opts = _subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('')
+  const sel = `<select id="tmpSubjSel" class="border border-slate-200 rounded px-2 py-1 text-sm bg-white focus:outline-none">${opts}</select>`
+  const chosen = prompt(`Select subject to add to this class:\n${_subjects.map((s,i)=>`${i+1}. ${s.name}`).join('\n')}\n\nEnter number:`)
+  if (!chosen) return
+  const idx = parseInt(chosen) - 1
+  if (isNaN(idx) || !_subjects[idx]) { showToast('Invalid selection', 'error'); return }
+  const { error } = await getClient().from('class_subjects').insert({ class_id: classId, subject_id: _subjects[idx].id })
+  if (error && error.code === '23505') { showToast('Subject already assigned', 'info'); return }
+  if (error) { showToast(error.message, 'error'); return }
+  showToast(`${_subjects[idx].name} added`)
+  await loadSubjectAssignments()
+}
+
+async function removeSubjectFromClass(csId, classId) {
+  await getClient().from('class_subjects').delete().eq('id', csId)
+  showToast('Subject removed')
+  await loadSubjectAssignments()
+}
+</script>
+</body>
+</html>

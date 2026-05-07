@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Documents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}.drop-zone{border:2px dashed #cbd5e1;transition:all .2s;}.drop-zone.drag,.drop-zone:hover{border-color:#000;background:#f8fafc;cursor:pointer;}</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"        class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"          class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"         class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"     class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+    <a href="term-settings.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">tune</span><span>Term Settings</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div><h2 class="text-xl font-semibold">Documents</h2><p class="text-sm text-slate-500">School records, circulars and uploaded files</p></div>
+    <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800 transition-colors"><span class="material-symbols-outlined" style="font-size:15px">upload</span>Upload</button>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-24 md:pb-8">
+
+    <!-- Upload area -->
+    <div class="drop-zone rounded-lg p-8 text-center"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('fileInput').click()">
+      <span class="material-symbols-outlined text-slate-400" style="font-size:40px">cloud_upload</span>
+      <p class="text-sm font-semibold text-slate-700 mt-2">Drop files here or click to upload</p>
+      <p class="text-xs text-slate-400 mt-1">PDF, Word, Excel, PNG, JPG · Max 20MB</p>
+
+      <!-- Upload progress -->
+      <div id="uploadProgress" class="hidden mt-4 max-w-xs mx-auto">
+        <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+          <span id="uploadFileName">Uploading…</span>
+          <span id="uploadPct">0%</span>
+        </div>
+        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+          <div id="uploadBar" class="bg-black h-full rounded-full transition-all duration-200" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="fileInput" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="handleFiles(this.files)"/>
+
+    <!-- Category filter + search -->
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="flex-1 min-w-48 flex items-center gap-2 border border-slate-200 rounded px-3 py-2 bg-white">
+        <span class="material-symbols-outlined text-slate-400" style="font-size:17px">search</span>
+        <input type="text" placeholder="Search documents…" class="flex-1 bg-transparent text-sm focus:outline-none" oninput="filterDocs(this.value)"/>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="setCategory('')" class="cat-btn px-3 py-1.5 rounded text-sm font-medium border transition-colors active border-black bg-black text-white" data-cat="">All</button>
+        <button onclick="setCategory('Admissions')" class="cat-btn px-3 py-1.5 rounded text-sm font-medium border border-slate-200 hover:border-slate-400 transition-colors" data-cat="Admissions">Admissions</button>
+        <button onclick="setCategory('Circulars')" class="cat-btn px-3 py-1.5 rounded text-sm font-medium border border-slate-200 hover:border-slate-400 transition-colors" data-cat="Circulars">Circulars</button>
+        <button onclick="setCategory('Timetables')" class="cat-btn px-3 py-1.5 rounded text-sm font-medium border border-slate-200 hover:border-slate-400 transition-colors" data-cat="Timetables">Timetables</button>
+        <button onclick="setCategory('Records')" class="cat-btn px-3 py-1.5 rounded text-sm font-medium border border-slate-200 hover:border-slate-400 transition-colors" data-cat="Records">Records</button>
+      </div>
+    </div>
+
+    <!-- Documents grid -->
+    <div id="docsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white border border-slate-200 rounded-lg p-4 col-span-full text-center text-sm text-slate-400 py-12">Loading…</div>
+    </div>
+  </main>
+</div>
+
+<!-- CATEGORY MODAL (shown when uploading multiple files) -->
+<div id="catModal" class="fixed inset-0 bg-black/40 z-50 items-center justify-center hidden" id="catModal">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-6">
+    <h3 class="text-base font-semibold mb-1">Choose Category</h3>
+    <p class="text-sm text-slate-500 mb-4" id="catModalFile">—</p>
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="confirmCategory('Admissions')" class="px-3 py-2.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">Admissions</button>
+      <button onclick="confirmCategory('Circulars')" class="px-3 py-2.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">Circulars</button>
+      <button onclick="confirmCategory('Timetables')" class="px-3 py-2.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">Timetables</button>
+      <button onclick="confirmCategory('Records')" class="px-3 py-2.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">Records</button>
+    </div>
+    <button onclick="confirmCategory('General')" class="w-full mt-2 px-3 py-2.5 bg-black text-white rounded text-sm font-medium hover:bg-slate-800">General</button>
+  </div>
+</div>
+
+<script>
+let _profile = null, _allDocs = [], _currentCat = '', _pendingFiles = [], _pendingIdx = 0
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  await loadDocs()
+})()
+
+async function loadDocs(cat) {
+  const { data, error } = await getClient()
+    .from('documents')
+    .select('*')
+    .eq('school_id', _profile.school_id)
+    .order('uploaded_at', { ascending: false })
+
+  if (error) { showToast('Failed to load documents','error'); return }
+  _allDocs = data || []
+  renderDocs(_currentCat ? _allDocs.filter(d=>d.category===_currentCat) : _allDocs)
+}
+
+function filterDocs(q) {
+  const filtered = _allDocs.filter(d => {
+    if (_currentCat && d.category !== _currentCat) return false
+    if (q && !d.name.toLowerCase().includes(q.toLowerCase())) return false
+    return true
+  })
+  renderDocs(filtered)
+}
+
+function setCategory(cat) {
+  _currentCat = cat
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    const active = b.dataset.cat === cat
+    b.className = `cat-btn px-3 py-1.5 rounded text-sm font-medium border transition-colors ${active ? 'border-black bg-black text-white' : 'border-slate-200 hover:border-slate-400'}`
+  })
+  renderDocs(cat ? _allDocs.filter(d=>d.category===cat) : _allDocs)
+}
+
+function renderDocs(docs) {
+  if (!docs.length) {
+    document.getElementById('docsGrid').innerHTML = '<div class="bg-white border border-slate-200 rounded-lg p-12 text-center text-sm text-slate-400 col-span-full">No documents found. Upload your first file above.</div>'
+    return
+  }
+  const ic = { 'application/pdf':'picture_as_pdf', 'application/msword':'description', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'description', 'application/vnd.ms-excel':'table_chart', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'table_chart', 'image/png':'image', 'image/jpeg':'image' }
+  const icol = { 'application/pdf':'text-red-500', 'application/msword':'text-blue-500', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'text-blue-500', 'application/vnd.ms-excel':'text-green-600', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'text-green-600', 'image/png':'text-purple-500', 'image/jpeg':'text-purple-500' }
+  const catCol = { Admissions:'bg-blue-50 text-blue-700', Circulars:'bg-amber-50 text-amber-700', Timetables:'bg-green-50 text-green-700', Records:'bg-purple-50 text-purple-700', General:'bg-gray-100 text-gray-600' }
+
+  document.getElementById('docsGrid').innerHTML = docs.map(d => {
+    const icon = ic[d.mime_type] || 'insert_drive_file'
+    const iconColor = icol[d.mime_type] || 'text-slate-400'
+    const size = d.file_size_bytes ? (d.file_size_bytes > 1048576 ? (d.file_size_bytes/1048576).toFixed(1)+' MB' : Math.round(d.file_size_bytes/1024)+' KB') : '—'
+    const date = new Date(d.uploaded_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+    return `<div class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined ${iconColor} flex-shrink-0 mt-0.5" style="font-size:28px">${icon}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate" title="${d.name}">${d.name}</p>
+          <div class="flex items-center gap-2 mt-1 flex-wrap">
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${catCol[d.category]||catCol.General}">${d.category}</span>
+            <span class="text-xs text-slate-400">${size}</span>
+            <span class="text-xs text-slate-400">${date}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3 pt-3 border-t border-slate-100">
+        <button onclick="downloadDoc('${d.id}','${d.storage_path}')" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-xs font-medium hover:bg-gray-50 transition-colors text-slate-600">
+          <span class="material-symbols-outlined" style="font-size:14px">download</span>Download
+        </button>
+        <button onclick="deleteDoc('${d.id}','${encodeURIComponent(d.storage_path)}')" class="p-1.5 text-slate-300 hover:text-red-500 rounded hover:bg-red-50 transition-colors">
+          <span class="material-symbols-outlined" style="font-size:17px">delete</span>
+        </button>
+      </div>
+    </div>`
+  }).join('')
+}
+
+// ── Upload flow ───────────────────────────────────────────────
+
+function handleDrop(e) {
+  e.preventDefault()
+  e.currentTarget.classList.remove('drag')
+  handleFiles(e.dataTransfer.files)
+}
+
+function handleFiles(files) {
+  if (!files?.length) return
+  _pendingFiles = Array.from(files)
+  _pendingIdx = 0
+  askCategory(_pendingFiles[0])
+}
+
+function askCategory(file) {
+  document.getElementById('catModalFile').textContent = file.name
+  document.getElementById('catModal').classList.remove('hidden')
+  document.getElementById('catModal').classList.add('flex')
+}
+
+async function confirmCategory(cat) {
+  document.getElementById('catModal').classList.add('hidden')
+  document.getElementById('catModal').classList.remove('flex')
+  await uploadFile(_pendingFiles[_pendingIdx], cat)
+  _pendingIdx++
+  if (_pendingIdx < _pendingFiles.length) {
+    askCategory(_pendingFiles[_pendingIdx])
+  } else {
+    _pendingFiles = []
+    _pendingIdx = 0
+  }
+}
+
+async function uploadFile(file, category) {
+  const maxSize = 20 * 1024 * 1024
+  if (file.size > maxSize) { showToast(`${file.name} exceeds 20MB`, 'error'); return }
+
+  const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','image/png','image/jpeg']
+  if (!allowed.includes(file.type)) { showToast(`${file.name}: file type not allowed`, 'error'); return }
+
+  // Show progress
+  const prog = document.getElementById('uploadProgress')
+  const bar = document.getElementById('uploadBar')
+  const pct = document.getElementById('uploadPct')
+  const fn = document.getElementById('uploadFileName')
+  prog.classList.remove('hidden')
+  fn.textContent = file.name
+  bar.style.width = '20%'; pct.textContent = '20%'
+
+  try {
+    const ext = file.name.split('.').pop()
+    const path = `${_profile.school_id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+    bar.style.width = '50%'; pct.textContent = '50%'
+
+    const { error: upErr } = await getClient().storage.from('school-documents').upload(path, file, { contentType: file.type })
+    if (upErr) throw upErr
+
+    bar.style.width = '80%'; pct.textContent = '80%'
+
+    const { error: dbErr } = await getClient().from('documents').insert({
+      school_id: _profile.school_id,
+      name: file.name,
+      category,
+      storage_path: path,
+      file_size_bytes: file.size,
+      mime_type: file.type,
+      uploaded_by: _profile.id,
+    })
+    if (dbErr) throw dbErr
+
+    bar.style.width = '100%'; pct.textContent = '100%'
+    setTimeout(() => prog.classList.add('hidden'), 800)
+    showToast(`${file.name} uploaded`)
+    await loadDocs()
+  } catch(e) {
+    prog.classList.add('hidden')
+    showToast(e.message || 'Upload failed', 'error')
+  }
+}
+
+async function downloadDoc(id, storagePath) {
+  try {
+    const { data, error } = await getClient().storage.from('school-documents').createSignedUrl(storagePath, 60)
+    if (error) throw error
+    const a = document.createElement('a'); a.href = data.signedUrl; a.target = '_blank'; a.click()
+  } catch(e) {
+    // Try public URL as fallback
+    const { data } = getClient().storage.from('school-documents').getPublicUrl(storagePath)
+    window.open(data.publicUrl, '_blank')
+  }
+}
+
+async function deleteDoc(id, encodedPath) {
+  if (!confirm('Delete this document? This cannot be undone.')) return
+  const storagePath = decodeURIComponent(encodedPath)
+  try {
+    await getClient().storage.from('school-documents').remove([storagePath])
+    await getClient().from('documents').delete().eq('id', id)
+    showToast('Document deleted')
+    await loadDocs()
+  } catch(e) { showToast(e.message || 'Delete failed', 'error') }
+}
+</script>
+</body>
+</html>

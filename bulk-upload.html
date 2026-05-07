@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SchoolMasterPro — Bulk Score Upload</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="smp-supabase.js"></script>
+<style>
+body{font-family:'Inter',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}
+.fill-icon{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;}
+.thin-scrollbar::-webkit-scrollbar{width:4px;height:4px;}.thin-scrollbar::-webkit-scrollbar-thumb{background:#e0e3e5;border-radius:10px;}
+.nav-item{transition:background .15s,color .15s;}.nav-item.active{background:#f2f4f6;color:#000;font-weight:600;border-right:2px solid #000;}.nav-item:not(.active){color:#45464d;}.nav-item:not(.active):hover{background:#f2f4f6;color:#191c1e;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}.pulse{animation:pulse 2s ease-in-out infinite;}
+.drop-zone{border:2px dashed #cbd5e1;transition:all .2s;}
+.drop-zone.drag,.drop-zone:hover{border-color:#000;background:#f8fafc;}
+.err-row{background:#fff5f5;}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex">
+
+<!-- SIDEBAR -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-60 border-r border-slate-200 bg-white z-50">
+  <div class="px-5 py-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 bg-black rounded flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-white fill-icon" style="font-size:16px">verified</span></div><div><h1 class="text-sm font-bold leading-tight">SchoolMasterPro</h1><p class="text-[10px] text-slate-400 uppercase font-medium tracking-wide">School Operator</p></div></div></div>
+  <div class="px-4 py-3 border-b border-slate-100"><p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Active School</p><div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-slate-200 rounded text-sm font-medium"><span id="sidebarSchoolName" class="truncate">Loading…</span></div><div class="flex items-center gap-1.5 mt-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500 pulse flex-shrink-0"></span><span class="text-[10px] text-slate-400 font-medium" id="sidebarTermLabel">—</span></div></div>
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto thin-scrollbar">
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mb-2">Main</p>
+    <a href="index.html"      class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">dashboard</span><span>Dashboard</span></a>
+    <a href="students.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">group</span><span>Students</span></a>
+    <a href="scores.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">edit_document</span><span>Assessments</span></a>
+    <a href="fees.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">payments</span><span>Fee Records</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">End of Session</p>
+    <a href="promotion.html"  class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upgrade</span><span>Promotion</span></a>
+    <a href="bulk-upload.html" class="nav-item active flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">upload_file</span><span>Bulk Score Upload</span></a>
+    <a href="notifications.html" class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><span>Notifications</span></a>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-2">School</p>
+    <a href="staff.html"       class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">badge</span><span>Staff Register</span></a>
+    <a href="documents.html"   class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">folder_open</span><span>Documents</span></a>
+    <a href="reports.html"     class="nav-item flex items-center gap-3 px-3 py-2 rounded text-sm"><span class="material-symbols-outlined" style="font-size:20px">receipt_long</span><span>Report Cards</span></a>
+  </nav>
+  <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3"><div id="sidebarInitials" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold flex-shrink-0">…</div><div class="flex-1 min-w-0"><p id="sidebarOperatorName" class="text-sm font-semibold truncate">Loading…</p><p class="text-[10px] text-slate-400">School Operator</p></div><button onclick="Auth.signOut()" class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined" style="font-size:18px">logout</span></button></div></div>
+</aside>
+
+<div class="flex-1 md:ml-60 min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-6 py-3.5 bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div>
+      <h2 class="text-xl font-semibold">Bulk Score Upload</h2>
+      <p class="text-sm text-slate-500">Upload scores for an entire class via CSV or Excel</p>
+    </div>
+    <button onclick="downloadTemplate()" class="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded text-sm font-medium hover:bg-gray-50 transition-colors">
+      <span class="material-symbols-outlined" style="font-size:15px">download</span>Download Template
+    </button>
+  </header>
+
+  <main class="flex-1 p-6 space-y-5 max-w-screen-xl w-full mx-auto pb-8">
+
+    <!-- Step 1: Select target assessment -->
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="text-base font-semibold mb-4">Step 1 — Select Target Assessment</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Term</label><select id="selTerm" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select term…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Class</label><select id="selClass" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select class…</option></select></div>
+        <div><label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Subject</label><select id="selSubject" class="w-full border border-slate-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-slate-700"><option value="">Select subject…</option></select></div>
+        <div class="flex items-end"><button onclick="prepareUpload()" class="w-full px-4 py-2 bg-black text-white rounded text-sm font-semibold hover:bg-slate-800">Prepare</button></div>
+      </div>
+      <div id="assessmentInfo" class="hidden mt-4 p-3 bg-green-50 border border-green-200 rounded flex items-center gap-2 text-sm text-green-800">
+        <span class="material-symbols-outlined fill-icon text-green-600" style="font-size:18px">check_circle</span>
+        <span id="assessmentInfoText">—</span>
+      </div>
+    </div>
+
+    <!-- Step 2: Upload CSV -->
+    <div id="uploadSection" class="hidden bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+      <h3 class="text-base font-semibold">Step 2 — Upload CSV File</h3>
+
+      <!-- Format guide -->
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+        <p class="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Required CSV Format</p>
+        <div class="overflow-x-auto">
+          <table class="text-xs font-mono border-collapse">
+            <thead><tr class="bg-slate-200"><th class="px-3 py-1.5 text-left border border-slate-300">student_code</th><th class="px-3 py-1.5 text-left border border-slate-300">full_name</th><th class="px-3 py-1.5 text-left border border-slate-300">ca1</th><th class="px-3 py-1.5 text-left border border-slate-300">ca2</th><th class="px-3 py-1.5 text-left border border-slate-300">exam</th></tr></thead>
+            <tbody><tr class="bg-white"><td class="px-3 py-1.5 border border-slate-200">SMP-0001</td><td class="px-3 py-1.5 border border-slate-200">Amara Eze</td><td class="px-3 py-1.5 border border-slate-200">18</td><td class="px-3 py-1.5 border border-slate-200">17</td><td class="px-3 py-1.5 border border-slate-200">52</td></tr></tbody>
+          </table>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">student_code must match exactly. full_name is for reference only. ca1 max: <span id="fmtCA1">20</span>, ca2 max: <span id="fmtCA2">20</span>, exam max: <span id="fmtExam">60</span>.</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="dropZone" class="drop-zone rounded-lg p-10 text-center cursor-pointer"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)"
+        onclick="document.getElementById('fileInput').click()">
+        <span class="material-symbols-outlined text-slate-400" style="font-size:40px">upload_file</span>
+        <p class="text-sm font-semibold text-slate-700 mt-2">Drop your CSV here or click to browse</p>
+        <p class="text-xs text-slate-400 mt-1">CSV files only · Max 500 rows per upload</p>
+      </div>
+      <input type="file" id="fileInput" accept=".csv" class="hidden" onchange="handleFile(this.files[0])"/>
+    </div>
+
+    <!-- Step 3: Preview & validate -->
+    <div id="previewSection" class="hidden bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h3 class="text-base font-semibold">Step 3 — Review & Import</h3>
+          <p class="text-sm text-slate-500" id="previewSubtitle">—</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-sm"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span><span id="countValid">0</span> valid</div>
+          <div class="flex items-center gap-2 text-sm"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span><span id="countErrors">0</span> errors</div>
+          <button id="importBtn" onclick="importScores()" class="px-4 py-2 bg-black text-white text-sm font-semibold rounded hover:bg-slate-800 transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:15px">cloud_upload</span>Import Scores
+          </button>
+        </div>
+      </div>
+      <div class="overflow-x-auto thin-scrollbar">
+        <table class="w-full text-left">
+          <thead><tr class="bg-gray-50 border-b border-slate-200">
+            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Row</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Student Code</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Name (CSV)</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">CA1</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">CA2</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Exam</th>
+            <th class="px-3 py-3 text-xs font-semibold text-slate-500 uppercase text-center">Total</th>
+            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+          </tr></thead>
+          <tbody id="previewBody" class="divide-y divide-slate-100 text-sm"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Upload history -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100"><h3 class="text-base font-semibold">Upload History</h3></div>
+      <div id="uploadHistory" class="divide-y divide-slate-100">
+        <div class="px-5 py-4 text-sm text-slate-400">No uploads yet.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let _profile = null
+let _assessment = null
+let _parsedRows = []
+let _studentMap = {}   // student_code → student record
+let _maxCA1 = 20, _maxCA2 = 20, _maxExam = 60
+
+;(async () => {
+  _profile = await initPage()
+  if (!_profile) return
+  await loadSelectors()
+  await loadUploadHistory()
+})()
+
+async function loadSelectors() {
+  const schoolId = _profile.school_id
+  const { data: sessions } = await getClient().from('academic_sessions').select('*,terms(*)').eq('school_id', schoolId).order('name', { ascending: false })
+  const ts = document.getElementById('selTerm')
+  sessions?.forEach(sess => sess.terms?.forEach(t => {
+    const o = document.createElement('option'); o.value = t.id; o.textContent = `${t.name} · ${sess.name}`
+    if (t.is_current) o.selected = true
+    ts.appendChild(o)
+  }))
+  const classes = await SetupAPI.getClasses(schoolId)
+  const cs = document.getElementById('selClass')
+  classes?.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; cs.appendChild(o) })
+  const subjects = await SetupAPI.getSubjects(schoolId)
+  const ss = document.getElementById('selSubject')
+  subjects?.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.name; ss.appendChild(o) })
+}
+
+async function prepareUpload() {
+  const termId = document.getElementById('selTerm').value
+  const classId = document.getElementById('selClass').value
+  const subjectId = document.getElementById('selSubject').value
+  if (!termId || !classId || !subjectId) { showToast('Select term, class and subject', 'error'); return }
+
+  // Get or create assessment
+  let { data: existing } = await getClient().from('assessments').select('*').eq('term_id', termId).eq('class_id', classId).eq('subject_id', subjectId).maybeSingle()
+  if (!existing) {
+    const { data: created, error } = await getClient().from('assessments').insert({ term_id: termId, class_id: classId, subject_id: subjectId, created_by: _profile.id }).select().single()
+    if (error) { showToast('Failed to create assessment', 'error'); return }
+    existing = created
+  }
+  if (existing.status === 'locked') { showToast('This assessment is locked', 'error'); return }
+  _assessment = existing
+
+  // Get weights
+  const { data: cs } = await getClient().from('class_subjects').select('*').eq('class_id', classId).eq('subject_id', subjectId).maybeSingle()
+  _maxCA1 = cs?.ca1_max ?? 20; _maxCA2 = cs?.ca2_max ?? 20; _maxExam = cs?.exam_max ?? 60
+  document.getElementById('fmtCA1').textContent = _maxCA1
+  document.getElementById('fmtCA2').textContent = _maxCA2
+  document.getElementById('fmtExam').textContent = _maxExam
+
+  // Build student lookup map
+  const { data: enrolled } = await getClient().from('student_class_terms').select('student:students(id,full_name,student_code)').eq('term_id', termId).eq('class_id', classId)
+  _studentMap = {}
+  enrolled?.forEach(e => { if (e.student) _studentMap[e.student.student_code.trim().toUpperCase()] = e.student })
+
+  const cl = document.getElementById('selClass').selectedOptions[0]?.text
+  const sl = document.getElementById('selSubject').selectedOptions[0]?.text
+  const tl = document.getElementById('selTerm').selectedOptions[0]?.text
+  document.getElementById('assessmentInfoText').textContent = `Ready: ${cl} · ${sl} · ${tl} · ${Object.keys(_studentMap).length} students enrolled`
+  document.getElementById('assessmentInfo').classList.remove('hidden')
+  document.getElementById('uploadSection').classList.remove('hidden')
+  showToast(`${Object.keys(_studentMap).length} students loaded. Upload your CSV.`)
+}
+
+function handleDrop(e) {
+  e.preventDefault()
+  document.getElementById('dropZone').classList.remove('drag')
+  const file = e.dataTransfer.files[0]
+  if (file) handleFile(file)
+}
+
+function handleFile(file) {
+  if (!file) return
+  if (!file.name.endsWith('.csv')) { showToast('Please upload a CSV file', 'error'); return }
+  if (!_assessment) { showToast('Prepare an assessment first', 'error'); return }
+
+  const reader = new FileReader()
+  reader.onload = e => parseCSV(e.target.result, file.name)
+  reader.readAsText(file)
+}
+
+function parseCSV(text, filename) {
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim())
+  if (lines.length < 2) { showToast('CSV appears empty', 'error'); return }
+
+  // Parse header
+  const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''))
+  const colIdx = {
+    student_code: header.indexOf('student_code'),
+    full_name:    header.indexOf('full_name'),
+    ca1:          header.indexOf('ca1'),
+    ca2:          header.indexOf('ca2'),
+    exam:         header.indexOf('exam'),
+  }
+
+  if (colIdx.student_code === -1 || colIdx.ca1 === -1) {
+    showToast('CSV must have student_code, ca1, ca2, exam columns', 'error')
+    return
+  }
+
+  _parsedRows = []
+  const errors = []
+  let validCount = 0
+
+  lines.slice(1).forEach((line, i) => {
+    const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''))
+    const rowNum = i + 2
+    const code = (cols[colIdx.student_code] || '').toUpperCase()
+    const name = colIdx.full_name >= 0 ? cols[colIdx.full_name] : ''
+    const ca1Raw = cols[colIdx.ca1]
+    const ca2Raw = colIdx.ca2 >= 0 ? cols[colIdx.ca2] : ''
+    const examRaw = colIdx.exam >= 0 ? cols[colIdx.exam] : ''
+
+    const rowErrors = []
+    const student = _studentMap[code]
+    if (!student) rowErrors.push(`Student code "${code}" not found in class`)
+
+    const ca1 = ca1Raw === '' ? null : parseInt(ca1Raw)
+    const ca2 = ca2Raw === '' ? null : parseInt(ca2Raw)
+    const exam = examRaw === '' ? null : parseInt(examRaw)
+
+    if (ca1Raw !== '' && (isNaN(ca1) || ca1 < 0 || ca1 > _maxCA1)) rowErrors.push(`CA1 must be 0–${_maxCA1}`)
+    if (ca2Raw !== '' && (isNaN(ca2) || ca2 < 0 || ca2 > _maxCA2)) rowErrors.push(`CA2 must be 0–${_maxCA2}`)
+    if (examRaw !== '' && (isNaN(exam) || exam < 0 || exam > _maxExam)) rowErrors.push(`Exam must be 0–${_maxExam}`)
+
+    const total = (ca1 !== null && ca2 !== null && exam !== null) ? ca1 + ca2 + exam : null
+    const grade = total !== null ? (total>=75?'A':total>=65?'B':total>=55?'C':total>=45?'D':total>=40?'E':'F') : null
+
+    const row = { rowNum, code, name, ca1, ca2, exam, total, grade, student, errors: rowErrors, valid: rowErrors.length === 0 }
+    _parsedRows.push(row)
+    if (row.valid) validCount++
+    else errors.push(...rowErrors.map(e => ({ row: rowNum, message: e })))
+  })
+
+  document.getElementById('countValid').textContent = validCount
+  document.getElementById('countErrors').textContent = _parsedRows.filter(r => !r.valid).length
+  document.getElementById('previewSubtitle').textContent = `${filename} · ${_parsedRows.length} rows`
+
+  renderPreview(_parsedRows)
+  document.getElementById('previewSection').classList.remove('hidden')
+  document.getElementById('importBtn').disabled = validCount === 0
+}
+
+function renderPreview(rows) {
+  const gc = g => ({ A: 'text-green-700', B: 'text-blue-700', C: 'text-amber-700', D: 'text-orange-700', E: 'text-red-600', F: 'text-red-800' }[g] || '')
+  document.getElementById('previewBody').innerHTML = rows.map(r => `
+    <tr class="${r.valid ? '' : 'err-row'}">
+      <td class="px-4 py-2.5 text-xs text-slate-400">${r.rowNum}</td>
+      <td class="px-3 py-2.5 font-mono text-xs font-semibold ${r.student ? '' : 'text-red-600'}">${r.code}</td>
+      <td class="px-3 py-2.5 text-sm text-slate-600">${r.name || '—'}</td>
+      <td class="px-3 py-2.5 text-center text-sm">${r.ca1 ?? '—'}</td>
+      <td class="px-3 py-2.5 text-center text-sm">${r.ca2 ?? '—'}</td>
+      <td class="px-3 py-2.5 text-center text-sm">${r.exam ?? '—'}</td>
+      <td class="px-3 py-2.5 text-center text-sm font-bold">${r.total ?? '—'} ${r.grade ? `<span class="${gc(r.grade)}">(${r.grade})</span>` : ''}</td>
+      <td class="px-5 py-2.5">
+        ${r.valid
+          ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-green-50 text-green-700">VALID</span>'
+          : `<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-50 text-red-700">ERROR</span>
+             <p class="text-[10px] text-red-500 mt-0.5">${r.errors.join(', ')}</p>`}
+      </td>
+    </tr>`).join('')
+}
+
+async function importScores() {
+  const validRows = _parsedRows.filter(r => r.valid)
+  if (!validRows.length) { showToast('No valid rows to import', 'error'); return }
+
+  const btn = document.getElementById('importBtn')
+  setLoading(btn, true)
+
+  const entries = validRows.map(r => ({
+    assessment_id: _assessment.id,
+    student_id: r.student.id,
+    ca1: r.ca1, ca2: r.ca2, exam: r.exam
+  }))
+
+  try {
+    const { error } = await getClient().from('score_entries').upsert(entries, { onConflict: 'assessment_id,student_id' })
+    if (error) throw error
+    await getClient().rpc('recompute_positions', { p_assessment_id: _assessment.id })
+
+    // Log the upload
+    await getClient().from('bulk_upload_logs').insert({
+      school_id: _profile.school_id,
+      assessment_id: _assessment.id,
+      uploaded_by: _profile.id,
+      filename: document.getElementById('previewSubtitle').textContent.split('·')[0].trim(),
+      total_rows: _parsedRows.length,
+      success_rows: validRows.length,
+      error_rows: _parsedRows.filter(r => !r.valid).length,
+      errors: _parsedRows.filter(r => !r.valid).map(r => ({ row: r.rowNum, message: r.errors.join(', ') }))
+    })
+
+    showToast(`${validRows.length} scores imported successfully`)
+    document.getElementById('previewSection').classList.add('hidden')
+    await loadUploadHistory()
+  } catch (e) {
+    showToast(e.message || 'Import failed', 'error')
+  }
+  setLoading(btn, false)
+}
+
+function downloadTemplate() {
+  if (!_assessment || !Object.keys(_studentMap).length) {
+    // Generic template
+    const csv = 'student_code,full_name,ca1,ca2,exam\nSMP-0001,Student Name Here,18,17,52\nSMP-0002,Student Name Here,15,14,44'
+    downloadCSV(csv, 'score_template.csv')
+    return
+  }
+  // Pre-filled with enrolled students
+  const rows = ['student_code,full_name,ca1,ca2,exam']
+  Object.values(_studentMap).forEach(s => rows.push(`${s.student_code},${s.full_name},,, `))
+  downloadCSV(rows.join('\n'), `scores_${document.getElementById('selClass').selectedOptions[0]?.text || 'class'}.csv`)
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob([content], { type: 'text/csv' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  a.click()
+}
+
+async function loadUploadHistory() {
+  const { data } = await getClient().from('bulk_upload_logs').select('*, assessment:assessments(class:classes(name),subject:subjects(name),term:terms(name))').eq('school_id', _profile.school_id).order('created_at', { ascending: false }).limit(20)
+  const el = document.getElementById('uploadHistory')
+  if (!data?.length) { el.innerHTML = '<div class="px-5 py-4 text-sm text-slate-400">No uploads yet.</div>'; return }
+  el.innerHTML = data.map(l => `
+    <div class="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors">
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium truncate">${l.filename || 'Upload'}</p>
+        <p class="text-xs text-slate-400">${l.assessment?.class?.name} · ${l.assessment?.subject?.name} · ${l.assessment?.term?.name}</p>
+      </div>
+      <div class="text-right flex-shrink-0">
+        <p class="text-xs font-semibold text-green-700">${l.success_rows} imported</p>
+        ${l.error_rows > 0 ? `<p class="text-xs text-red-500">${l.error_rows} errors</p>` : ''}
+      </div>
+      <p class="text-xs text-slate-400 flex-shrink-0">${new Date(l.created_at).toLocaleDateString('en-GB')}</p>
+    </div>`).join('')
+}
+</script>
+</body>
+</html>
